@@ -29,6 +29,25 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $appointment = DB::table('user_appointments')
+        ->where('userId', Auth::id())
+        ->where('current', 1)
+        ->where('active', 1)
+        ->value('id', 'monasteryId');
+
+        $appointmentId = $appointment->id ?? null; // Handle null if no match
+        $monasteryId = $appointment->monasteryId ?? null;
+
+        $positionId = DB::table('appointment_positions')
+        ->where('appointmentId', $appointmentId)
+        ->where('current', 1)
+        ->where('active', 1)
+        ->first(['positionId']);
+
+        session(['appointmentId' => $appointmentId]);
+        session(['monasteryId' => $monasteryId]);
+        session(['positionId' => $positionId]);
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
