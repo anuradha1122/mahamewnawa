@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class UserContactInfo extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'userId',
+        'addressLine1',
+        'addressLine2',
+        'addressLine3',
+        'mobile1',
+        'mobile2',
+        'active',
+    ];
 }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('addressLine2', 80)->required();
             $table->string('addressLine3', 80)->required();
             $table->string('mobile', 10)->required()->unique();
-            $table->tinyInteger('higherMonasteryId')->unsigned()->required();
+            $table->tinyInteger('higherMonasteryId')->unsigned()->nullable();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });

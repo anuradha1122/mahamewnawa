@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class UserAppointment extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'userId',
+        'monasteryId',
+        'appointedDate',
+        'releasedDate',
+        'current',
+        'active',
+    ];
 }
