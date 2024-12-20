@@ -11,7 +11,7 @@ class StoreDambadiwaProjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,10 @@ class StoreDambadiwaProjectRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
+        return $rules = [
+            'name' => ['required', 'unique:dambadiwa_projects,name', 'string', 'max:100'],
+            'startDate' => ['required', 'date', 'after:today'],
+            'endDate' => ['required', 'date', 'after:startDay'],
         ];
     }
 }

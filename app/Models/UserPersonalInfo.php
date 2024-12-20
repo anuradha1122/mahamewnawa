@@ -15,6 +15,7 @@ class UserPersonalInfo extends Model
         'religionId',
         'civilStatusId',
         'genderId',
+        'categoryId',
         'birthDay',
         'active',
     ];

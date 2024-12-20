@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('dambadiwa_projects', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 200)->required();
-            $table->integer('inchargeId')->unsigned()->required();
+            $table->string('name', 200)->required()->unique();
             $table->date('startDate')->required();
             $table->date('endDate')->nullable();
+            $table->string('slug', 500)->required();
             $table->tinyInteger('current')->default(1)->required();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();

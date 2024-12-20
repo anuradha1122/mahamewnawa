@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('contact_infos', function (Blueprint $table) {
             $table->id();
-            $table->integer('userId')->unsigned()->required()->unique();
+            $table->integer('followerId')->unsigned()->required()->unique();
             $table->string('addressLine1', 80)->required();
             $table->string('addressLine2', 80)->required();
             $table->string('addressLine3', 80)->required();
+            $table->mediumInteger('districtId')->unsigned()->required();
+            $table->mediumInteger('monasteryId')->unsigned()->required();
             $table->string('mobile1', 10)->required()->unique();
             $table->string('mobile2', 10)->required()->nullable();
             $table->tinyInteger('active')->default(1)->required();

@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class DambadiwaProject extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'startDate',
+        'endDate',
+        'slug',
+        'current',
+        'active',
+    ];
 }

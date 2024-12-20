@@ -3,28 +3,25 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-breadcrumb :list="$option" />
             <div class="isolate bg-white px-6 py-10 sm:py-10 lg:px-8">
-                <x-profile-heading heading="{{ $teacher->nameWithInitials }}" subHeading="{{ $teacher->nic }}" />
+                <x-profile-heading heading="{{ $user->nameWithInitials }}" subHeading="{{ $user->nic }}" />
                 <div class="border-t border-gray-200">
-                    @livewire('teacher-profile',
+                    @livewire('user-profile',
                     [
-                        'id' => $teacher->id,
-                        'name' => $teacher->userName,
-                        'nameWithInitials' => $teacher->nameWithInitials,
-                        'nic' => $teacher->nic,
-                        'race' => $teacher->race,
-                        'religion' => $teacher->religion,
-                        'civilStatus' => $teacher->civilStatus,
-                        'birthDay' => $teacher->birthDay,
-                        'gender' => $teacher->gender,
-                        'permAddressLine1' => $teacher->permAddressLine1,
-                        'permAddressLine2' => $teacher->permAddressLine2,
-                        'permAddressLine3' => $teacher->permAddressLine3,
-                        'tempAddressLine1' => $teacher->tempAddressLine1,
-                        'tempAddressLine2' => $teacher->tempAddressLine2,
-                        'tempAddressLine3' => $teacher->tempAddressLine3,
-                        'mobile1' => $teacher->mobile1,
-                        'mobile2' => $teacher->mobile2,
-                        'service' => $service,
+                        'id' => $user->id,
+                        'name' => $user->userName,
+                        'nameWithInitials' => $user->nameWithInitials,
+                        'nic' => $user->nic,
+                        'email' => $user->email,
+                        'race' => $user->race,
+                        'religion' => $user->religion,
+                        'civilStatus' => $user->civilStatus,
+                        'birthDay' => $user->birthDay,
+                        'gender' => $user->gender,
+                        'addressLine1' => $user->addressLine1,
+                        'addressLine2' => $user->addressLine2,
+                        'addressLine3' => $user->addressLine3,
+                        'mobile1' => $user->mobile1,
+                        'mobile2' => $user->mobile2,
                         'appointment' => $appointment,
                         'position' => $position,
                     ])

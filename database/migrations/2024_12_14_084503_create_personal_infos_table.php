@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('personal_infos', function (Blueprint $table) {
             $table->id();
-            $table->integer('userId')->unsigned()->required()->unique();
+            $table->integer('followerId')->unsigned()->required()->unique();
             $table->tinyInteger('raceId')->unsigned()->nullable();
             $table->tinyInteger('religionId')->unsigned()->nullable();
             $table->tinyInteger('civilStatusId')->unsigned()->nullable();

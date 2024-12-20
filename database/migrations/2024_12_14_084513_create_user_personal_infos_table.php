@@ -18,6 +18,7 @@ return new class extends Migration
             $table->tinyInteger('religionId')->unsigned()->nullable();
             $table->tinyInteger('civilStatusId')->unsigned()->nullable();
             $table->tinyInteger('genderId')->unsigned()->required();
+            $table->tinyInteger('categoryId')->unsigned()->required();
             $table->date('birthDay')->required();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();

@@ -26,5 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(MonasterySeeder::class);
         $this->call(UserCategorySeeder::class);
         $this->call(PositionSeeder::class);
+        $this->call(DistrictSeeder::class);
+        $this->call(ProvinceSeeder::class);
     }
 }
