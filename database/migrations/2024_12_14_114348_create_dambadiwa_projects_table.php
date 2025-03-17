@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name', 200)->required()->unique();
             $table->date('startDate')->required();
             $table->date('endDate')->nullable();
+            $table->integer('fee')->required();
             $table->string('slug', 500)->required();
             $table->tinyInteger('current')->default(1)->required();
             $table->tinyInteger('active')->default(1)->required();

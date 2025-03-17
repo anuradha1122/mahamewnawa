@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreDambadiwaProjectRequest extends FormRequest
+class StoreDambadiwaCrewPaymentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -21,11 +21,8 @@ class StoreDambadiwaProjectRequest extends FormRequest
      */
     public function rules(): array
     {
-        return $rules = [
-            'name' => ['required', 'unique:dambadiwa_projects,name', 'string', 'max:100'],
-            'fee' => ['required'],
-            'startDate' => ['required', 'date', 'after:today'],
-            'endDate' => ['required', 'date', 'after:startDay'],
+        return [
+            //
         ];
     }
 }

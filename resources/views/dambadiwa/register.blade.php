@@ -10,6 +10,7 @@
                     <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                         
                         <x-form-text-input-section size="sm:col-span-2" name="name" id="name" label="Projects Name" />
+                        <x-form-number-input-section size="sm:col-span-2" name="fee" id="fee" label="Projects Fee for Individual(Rs)" />
                         <x-form-date-input-section size="sm:col-span-1" name="startDate" id="startDate" label="Start Date" />
                         <x-form-date-input-section size="sm:col-span-1" name="endDate" id="endDate" label="End Date" />
                     </div>

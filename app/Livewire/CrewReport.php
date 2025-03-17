@@ -36,6 +36,7 @@ class CrewReport extends Component
         $project = DambadiwaProject::where('slug', $this->projectSlug)->first();
         $this->projectId = $project->id;
         $category = $this->category;
+        $fee = $project->fee;
         return $results = DB::table('dambadiwa_crews')
         ->leftJoin('users', function ($join) use ($category) {
             $join->on('dambadiwa_crews.crewId', '=', 'users.id')
@@ -46,6 +47,8 @@ class CrewReport extends Component
                  ->where('dambadiwa_crews.categoryId', 2);
         })
         ->select(
+            'dambadiwa_crews.id AS id',
+            'dambadiwa_crews.categoryId',
             DB::raw('COALESCE(users.name, followers.name) AS userName'),
             DB::raw('COALESCE(users.nameWithInitials, followers.nameWithInitials) AS nameWithInitials'),
             DB::raw('COALESCE(users.nic, followers.nic) AS nic'),
@@ -83,7 +86,37 @@ class CrewReport extends Component
                 WHEN dambadiwa_crews.otherIllness = 1 THEN "yes" 
                 WHEN dambadiwa_crews.otherIllness = 2 THEN "no" 
                 ELSE "" 
-                END AS otherIllness')
+                END AS otherIllness'),
+            DB::raw('CASE 
+                WHEN dambadiwa_crews.heartOtherOperation = 1 THEN "yes" 
+                WHEN dambadiwa_crews.heartOtherOperation = 2 THEN "no" 
+                ELSE "" 
+                END AS heartOtherOperation'),
+            DB::raw('CASE 
+                WHEN dambadiwa_crews.artificialHandLeg = 1 THEN "yes" 
+                WHEN dambadiwa_crews.artificialHandLeg = 2 THEN "no" 
+                ELSE "" 
+                END AS artificialHandLeg'),
+            DB::raw('CASE 
+                WHEN dambadiwa_crews.mentalIllness = 1 THEN "yes" 
+                WHEN dambadiwa_crews.mentalIllness = 2 THEN "no" 
+                ELSE "" 
+                END AS mentalIllness'),
+            DB::raw('CASE 
+                WHEN dambadiwa_crews.forces = 1 THEN "yes" 
+                WHEN dambadiwa_crews.forces = 2 THEN "no" 
+                ELSE "" 
+                END AS forces'),
+            DB::raw('CASE 
+                WHEN dambadiwa_crews.forcesRemoval = 1 THEN "yes" 
+                WHEN dambadiwa_crews.forcesRemoval = 2 THEN "no" 
+                ELSE "" 
+                END AS forcesRemoval'),
+            DB::raw('CASE 
+                WHEN dambadiwa_crews.courtOrder = 1 THEN "yes" 
+                WHEN dambadiwa_crews.courtOrder = 2 THEN "no" 
+                ELSE "" 
+                END AS courtOrder')
         )
         ->where('dambadiwa_crews.projectId', $this->projectId)
         ->when(!in_array($this->diabetes, [1, 2, 3]), function ($query) {

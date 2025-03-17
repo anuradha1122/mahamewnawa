@@ -48,8 +48,11 @@ class DambadiwaProjectController extends Controller
             ["test 4", 10],
             ['test 5', 3]
         ];
-        $option = ['Dashboard' => 'dambadiwa.dashboard'];
-        
+        $option = [
+            'Dashboard' => 'dashboard',
+            'Dambadiwa Dashboard' => 'dambadiwa.dashboard',
+        ];
+
         $card_pack_1 = collect([]);
 
         if ($projects) {
@@ -62,7 +65,7 @@ class DambadiwaProjectController extends Controller
                     'slug' => $value->slug,
                     'crewCount' => $value->crewCount,
                 ]);
-            }     
+            }
         }
         //dd($card_pack_1);
         return view('dambadiwa/dashboard',compact('option','card_pack_1','chartData'));
@@ -119,13 +122,14 @@ class DambadiwaProjectController extends Controller
 
         $dambadiwaProject = DambadiwaProject::create([
             'name' => ucwords(strtolower($request->name)),
+            'fee' => $request->fee,
             'startDate' => $request->startDate,
             'slug' => strtolower(str_replace(' ', '-', $request->name)),
             'endDate' => $request->endDate,
         ]);
 
         session()->flash('success', 'Project has been successfully registered!');
-        
+
         return view('dambadiwa/register',compact('option'));
     }
 
@@ -152,7 +156,7 @@ class DambadiwaProjectController extends Controller
             ['test 5', 3]
         ];
         $option = ['Dashboard' => 'dambadiwa.dashboard'];
-        
+
         $card_pack_1 = collect([
             (object) [
                 'id' => 1,
@@ -195,6 +199,20 @@ class DambadiwaProjectController extends Controller
         ];
         return view('dambadiwa/crewlist',compact('option', 'projectSlug'));
     }
+
+
+    public function crewprofile($projectSlug, $id, $categoryId)
+    {
+        dd($projectSlug, $id, $categoryId);
+        $option = [
+            'Dashboard' => 'dambadiwa.dashboard',
+            'Dambadiwa Project Profile' => function () use ($id) {
+                return route('dambadiwa.project', ['id' => $id]);
+            },
+        ];
+        return view('dambadiwa/crewlist',compact('option', 'projectSlug'));
+    }
+
     /**
      * Display the specified resource.
      */

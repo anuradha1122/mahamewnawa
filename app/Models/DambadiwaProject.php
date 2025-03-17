@@ -13,6 +13,7 @@ class DambadiwaProject extends Model
         'name',
         'startDate',
         'endDate',
+        'fee',
         'slug',
         'current',
         'active',
