@@ -5,7 +5,7 @@
 
             <x-search-heading heading="CREW LIST" subheading="select critaria" />
             <div class="grid grid-cols-1 gap-x-8 gap-y-6">
-                @livewire('crew-report', ['projectSlug' => $projectSlug])
+                @livewire('crew-report', ['projectId' => $projectId, 'crew_type' => $crew_type])
             </div>
         </div>
     </div>

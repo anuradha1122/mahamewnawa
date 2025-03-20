@@ -30,10 +30,11 @@ class CrewReport extends Component
 
     public $projectSlug;
     public $projectId;
+    public $crew_type;
 
     public function generateReports(){
 
-        $project = DambadiwaProject::where('slug', $this->projectSlug)->first();
+        $project = DambadiwaProject::where('id', $this->projectId)->first();
         $this->projectId = $project->id;
         $category = $this->category;
         $fee = $project->fee;
@@ -48,7 +49,9 @@ class CrewReport extends Component
         })
         ->select(
             'dambadiwa_crews.id AS id',
+            'dambadiwa_crews.crewId',
             'dambadiwa_crews.categoryId',
+            'dambadiwa_crews.payment',
             DB::raw('COALESCE(users.name, followers.name) AS userName'),
             DB::raw('COALESCE(users.nameWithInitials, followers.nameWithInitials) AS nameWithInitials'),
             DB::raw('COALESCE(users.nic, followers.nic) AS nic'),
@@ -119,6 +122,10 @@ class CrewReport extends Component
                 END AS courtOrder')
         )
         ->where('dambadiwa_crews.projectId', $this->projectId)
+        ->where('dambadiwa_crews.active', 1)
+        ->when($this->crew_type, function ($query) {
+            return $query->where('dambadiwa_crews.categoryId',$this->crew_type);
+        })
         ->when(!in_array($this->diabetes, [1, 2, 3]), function ($query) {
             // Show all values if diabetes is not 1, 2, or 3
             return $query;

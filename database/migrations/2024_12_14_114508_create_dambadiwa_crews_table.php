@@ -33,10 +33,14 @@ return new class extends Migration
             $table->string('fatherOccupation', 100)->nullable();
             $table->tinyInteger('passport')->unsigned()->nullable();
             $table->string('passportNo', 20)->nullable();
+            $table->string('passportImage', 200)->nullable();
+            $table->string('passportBookImage', 200)->nullable();
+            $table->string('visaDocument', 200)->nullable();
             $table->tinyInteger('policeReport')->unsigned()->nullable();
+            $table->string('policeReportDocument', 200)->nullable();
             $table->tinyInteger('passportPlace')->unsigned()->nullable();
-            $table->string('bithCertificate', 20)->nullable();
-            $table->integer('payment')->unsigned()->nullable();
+            $table->string('birthCertificate', 200)->nullable();
+            $table->decimal('payment', 10,2)->unsigned()->nullable();
             $table->tinyInteger('diabetes')->unsigned()->nullable();
             $table->tinyInteger('highBloodPressure')->unsigned()->nullable();
             $table->tinyInteger('asthma')->unsigned()->nullable();
@@ -47,6 +51,7 @@ return new class extends Migration
             $table->tinyInteger('heartOtherOperation')->unsigned()->nullable();
             $table->tinyInteger('artificialHandLeg')->unsigned()->nullable();
             $table->tinyInteger('mentalIllness')->unsigned()->nullable();
+            $table->string('medicalDocument', 200)->nullable();
             $table->tinyInteger('forces')->unsigned()->nullable();
             $table->tinyInteger('forcesRemoval')->unsigned()->nullable();
             $table->tinyInteger('courtOrder')->unsigned()->nullable();

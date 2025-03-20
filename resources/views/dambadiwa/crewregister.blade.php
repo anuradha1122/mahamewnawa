@@ -4,7 +4,7 @@
             <x-breadcrumb :list="$option" />
             <x-search-heading heading="CREW SEARCH ADD AND REMOVE" subheading="search by name,NIC OR telephone" />
             <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                @livewire('crew-search-add', ['size' => 'sm:col-span-2', 'projectSlug' => $projectId])
+                @livewire('crew-search-add', ['size' => 'sm:col-span-2', 'projectId' => $projectId])
             </div>
         </div>
     </div>

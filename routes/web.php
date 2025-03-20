@@ -50,14 +50,16 @@ Route::get('/dambadiwa/register', [DambadiwaProjectController::class, 'create'])
 Route::post('/dambadiwa/register', [DambadiwaProjectController::class, 'store'])->name('dambadiwa.store');
 Route::get('/dambadiwa/search', [DambadiwaProjectController::class, 'search'])->name('dambadiwa.search');
 Route::get('/dambadiwa/reports', [DambadiwaProjectController::class, 'reports'])->name('dambadiwa.reports');
-Route::get('/dambadiwa/project/{id}', [DambadiwaProjectController::class, 'project'])->name('dambadiwa.project');
+Route::get('/dambadiwa/project', [DambadiwaProjectController::class, 'project'])->name('dambadiwa.project');
+Route::get('/dambadiwa/project-crew', [DambadiwaProjectController::class, 'project_crew'])->name('dambadiwa.project_crew');
 
 Route::get('/dambadiwa/profile', [DambadiwaProjectController::class, 'profile'])->name('dambadiwa.profile');
 
-Route::get('/dambadiwa/project/{id}/crewregister', [DambadiwaProjectController::class, 'crewcreate'])->name('dambadiwa.crewregister');
-Route::get('/dambadiwa/project/{id}/crewlist', [DambadiwaProjectController::class, 'crewlist'])->name('dambadiwa.crewlist');
+Route::get('/dambadiwa/project/crewregister', [DambadiwaProjectController::class, 'crewcreate'])->name('dambadiwa.crewregister');
+Route::get('/dambadiwa/project/crewlist', [DambadiwaProjectController::class, 'crewlist'])->name('dambadiwa.crewlist');
 Route::get('/dambadiwa/project/{id}/crewreport', [DambadiwaProjectController::class, 'crewreport'])->name('dambadiwa.crewreport');
-Route::get('/dambadiwa/project/{projectSlug}/crewprofile/{categoryId}/{id}', [DambadiwaProjectController::class, 'crewprofile'])->name('dambadiwa.crewprofile');
+Route::get('/dambadiwa/project/crewprofile/', [DambadiwaProjectController::class, 'crewprofile'])->name('dambadiwa.crewprofile');
+Route::post('/dambadiwa/project/edit_crew_profile/', [DambadiwaProjectController::class, 'edit_crew_profile'])->name('dambadiwa.edit_crew_profile');
 
 
 require __DIR__.'/auth.php';

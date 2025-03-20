@@ -16,22 +16,22 @@
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-[calc(100vh-6rem)] bg-gray-100">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
-            @isset($header)
+            {{-- @isset($header)
                 <header class="bg-white shadow">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
-            @endisset
+            @endisset --}}
 
             <!-- Page Content -->
             <main>
                 <div class="flex flex-col sm:flex-row">
-                    <div class="relative flex-shrink-0 h-[calc(100vh-20rem)] w-full sm:w-1/4 flex flex-col rounded-xl bg-white bg-clip-border p-4 mt-4 text-gray-700 shadow-xl shadow-blue-gray-900/5 hidden sm:flex">
+                    <div class="relative flex-shrink-0 h-[calc(100vh-20rem)] w-full sm:w-1/4 md:flex flex-col rounded-xl bg-white bg-clip-border p-4 mt-4 text-gray-700 shadow-xl shadow-blue-gray-900/5 hidden sm:flex">
                         <div class="p-4 mb-2">
                             <h5 class="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
                                 {{ Auth::user()->nameWithInitials }}
@@ -57,11 +57,12 @@
                     </div>
                 </div>
             </main>
-            <footer class="flex flex-row flex-wrap items-center justify-center w-full py-6 mt-3 text-center border-t gap-y-6 gap-x-12 border-blue-gray-50 md:justify-between">
-                <p class="block font-sans text-base antialiased font-normal leading-relaxed text-blue-gray-900">
-                    © {{ date("Y") }} Mahamewnawa Monastery
-                </p>
-            </footer>
         </div>
+
+        <footer class="flex flex-row flex-wrap items-center justify-center w-full py-6 mt-3 text-center border-t gap-y-6 gap-x-12 border-blue-gray-50 bg-gray-900 text-white">
+            <p class="block font-sans text-base antialiased font-normal leading-relaxed text-blue-gray-900">
+                © {{ date("Y") }} Mahamewnawa Monastery
+            </p>
+        </footer>
     </body>
 </html>

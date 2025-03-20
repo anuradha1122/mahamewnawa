@@ -18,7 +18,7 @@ class CrewSearchAdd extends Component
 
     public function mount($size)
     {
-        $project = DambadiwaProject::where('slug', $this->projectSlug)->first();
+        $project = DambadiwaProject::where('id', $this->projectId)->first();
         $this->projectId = $project->id;
         $this->size = $size;
     }

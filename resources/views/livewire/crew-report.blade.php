@@ -86,8 +86,17 @@
                     <tbody class="divide-y divide-gray-200">
                     
                         @foreach ($results as $index => $result)
+                        @php
+                            if($result->payment == null || $result->diabetes == null || $result->highBloodPressure == null || $result->asthma == null || $result->apoplexy == null || $result->heartDisease == null || $result->otherIllness == null || $result->heartOtherOperation == null || $result->artificialHandLeg == null || $result->mentalIllness == null || $result->forces == null || $result->forcesRemoval == null || $result->courtOrder == null)
+                            {
+                                $bg_color = 'bg-red-500 text-white';
+                            }
+                            else{
+                                $bg_color = 'bg-green-500 text-white';
+                            }
+                        @endphp
                         <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $results->firstItem() + $index }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 {{ $bg_color }}">{{ $results->firstItem() + $index }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->userName }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nameWithInitials }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nic }}</td>
@@ -105,7 +114,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->forcesRemoval }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->courtOrder }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            <a href="{{ route('dambadiwa.crewprofile', [$result->id, $result->categoryId, $projectSlug]) }}" class="text-blue" >
+                            <a href="{{ route('dambadiwa.crewprofile', ['project_id' => $projectId, 'crew_id' => $result->crewId, 'category_id' => $result->categoryId]) }}" class="text-blue" >
                             <x-form-button-danger size="" text="Edit" modelBinding="" name="editCrew" /></td>
                             </a>
                         </tr>

@@ -6,6 +6,19 @@ use App\Http\Requests\StoreDambadiwaProjectRequest;
 use App\Http\Requests\UpdateDambadiwaProjectRequest;
 use Illuminate\Http\Request;
 use App\Models\DambadiwaProject;
+use App\Models\Race;
+use App\Models\Religion;
+use App\Models\CivilStatus;
+use App\Models\Gender;
+use App\Models\Monastery;
+use App\Models\ContactInfo;
+use App\Models\User;
+use App\Models\UserContactInfo;
+use App\Models\PersonalInfo;
+use App\Models\UserPersonalInfo;
+use App\Models\District;
+use App\Models\Follower;
+use App\Models\DambadiwaCrew;
 use Illuminate\Support\Facades\DB;
 
 class DambadiwaProjectController extends Controller
@@ -133,11 +146,10 @@ class DambadiwaProjectController extends Controller
         return view('dambadiwa/register',compact('option'));
     }
 
-    public function project($id)
+    public function project(Request $request)
     {
-        $project = DambadiwaProject::where('slug', $id)->first();
-        $projectId = $project->id;
-        //dd($projectId);
+        $projectId = $request->query('id');
+
         $categoryCounts = DB::table('dambadiwa_crews')
         ->select(
             DB::raw('SUM(CASE WHEN categoryId = 1 THEN 1 ELSE 0 END) as userCount'),
@@ -170,47 +182,680 @@ class DambadiwaProjectController extends Controller
             ],
         ]);
 
-        return view('dambadiwa/project',compact('option','project','card_pack_1','chartData'));
+        return view('dambadiwa/project',compact('option','card_pack_1','chartData','projectId'));
     }
 
-    public function crewcreate($id)
-    {
-
-        $projectId = $id;
+    public function project_crew(Request $request){
+        $projectId = $request->query('id');
+        $crew_type = $request->query('crew_type');
 
         $option = [
             'Dashboard' => 'dambadiwa.dashboard',
-            'Dambadiwa Project Profile' => function () use ($id) {
-                return route('dambadiwa.project', ['id' => $id]);
+            'Dambadiwa Project Profile' => function () use ($projectId) {
+                return route('dambadiwa.project', ['id' => $projectId]);
+            },
+        ];
+        return view('dambadiwa/crewlist',compact('option', 'projectId', 'crew_type'));
+    }
+
+    public function crewcreate(Request $request)
+    {
+
+        $projectId = $request->query('id');
+
+        $option = [
+            'Dashboard' => 'dambadiwa.dashboard',
+            'Dambadiwa Project Profile' => function () use ($projectId) {
+                return route('dambadiwa.project', ['id' => $projectId]);
             },
         ];
 
         return view('dambadiwa/crewregister',compact('option', 'projectId'));
     }
 
-    public function crewlist($id)
+    public function crewlist(Request $request)
     {
-        $projectSlug = $id;
+        $projectId = $request->query('id');
+        $crew_type = $request->query('crew_type');
+
         $option = [
             'Dashboard' => 'dambadiwa.dashboard',
-            'Dambadiwa Project Profile' => function () use ($id) {
-                return route('dambadiwa.project', ['id' => $id]);
+            'Dambadiwa Project Profile' => function () use ($projectId) {
+                return route('dambadiwa.project', ['id' => $projectId]);
             },
         ];
-        return view('dambadiwa/crewlist',compact('option', 'projectSlug'));
+        return view('dambadiwa/crewlist',compact('option', 'projectId','crew_type'));
     }
 
 
-    public function crewprofile($projectSlug, $id, $categoryId)
+    public function crewprofile(Request $request)
     {
-        dd($projectSlug, $id, $categoryId);
+        $projectId = $request->query('project_id');
+        $crew_id = $request->query('crew_id');
+        $category_id = $request->query('category_id');
+
+        $races = Race::where('active', 1)->get();
+        $religions = Religion::where('active', 1)->get();
+        $civilStatuses = CivilStatus::where('active', 1)->get();
+        $genders = Gender::where('active', 1)->get();
+        $monasteries = Monastery::where('active', 1)->get();
+        $districts = District::where('active', 1)->get();
+        $yesNo = collect([
+            (object) [
+                'id' => 1,
+                'name' => 'Yes',
+            ],
+            (object) [
+                'id' => 2,
+                'name' => 'No',
+            ],
+        ]);
+
+        if($category_id == 1){
+            $crew = DB::table('dambadiwa_crews')
+            ->join('users','dambadiwa_crews.crewId','users.id')
+            ->leftjoin('user_personal_infos', 'users.id', '=', 'user_personal_infos.userId')
+            ->leftjoin('user_contact_infos', 'users.id', '=', 'user_contact_infos.userId')
+            ->leftjoin('races', 'user_personal_infos.raceId', '=', 'races.id')
+            ->leftjoin('religions', 'user_personal_infos.religionId', '=', 'religions.id')
+            ->leftjoin('civil_statuses', 'user_personal_infos.civilStatusId', '=', 'civil_statuses.id')
+            ->where('dambadiwa_crews.crewId', $crew_id)
+            ->where('dambadiwa_crews.categoryId', $category_id)
+            ->where('dambadiwa_crews.active','1')
+            ->select(
+                'users.id AS crewId','users.name','users.nic','users.email','users.nameWithInitials',
+                'user_personal_infos.birthDay','user_personal_infos.genderId',
+                DB::raw("CASE 
+                    WHEN user_personal_infos.genderId = 1 THEN 'Male' 
+                    WHEN user_personal_infos.genderId = 2 THEN 'Female' 
+                    ELSE '' 
+                END AS gender"),
+                'races.name AS race',
+                'religions.name AS religion',
+                'civil_statuses.name AS civilStatus',
+                'user_contact_infos.addressLine1',
+                'user_contact_infos.addressLine2',
+                'user_contact_infos.addressLine3',
+                'user_contact_infos.mobile1',
+                'user_contact_infos.mobile2',
+                'user_personal_infos.raceId',
+                'user_personal_infos.religionId',
+                'user_personal_infos.civilStatusId',
+                'dambadiwa_crews.guardian',
+                'dambadiwa_crews.guardianPhone',
+                'dambadiwa_crews.guardianEmail',
+                'dambadiwa_crews.birthPlace',
+                'dambadiwa_crews.occupation',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.previousAbroad = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.previousAbroad = 2 THEN 'No' 
+                    ELSE '' 
+                END AS previousAbroadName"),
+                'dambadiwa_crews.previousAbroad',
+                'dambadiwa_crews.spouse',
+                'dambadiwa_crews.spousebirthPlace',
+                'dambadiwa_crews.spouseOccupation',
+                'dambadiwa_crews.mother',
+                'dambadiwa_crews.motherBirthPlace',
+                'dambadiwa_crews.motherOccupation',
+                'dambadiwa_crews.father',
+                'dambadiwa_crews.fatherBirthPlace',
+                'dambadiwa_crews.fatherOccupation',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.passport = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.passport = 2 THEN 'No' 
+                    ELSE '' 
+                END AS passportValue"),
+                'dambadiwa_crews.passport',
+                'dambadiwa_crews.passportNo',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.policeReport = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.policeReport = 2 THEN 'No' 
+                    ELSE '' 
+                END AS policeReportValue"),
+                'dambadiwa_crews.policeReport',
+                'dambadiwa_crews.payment',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.diabetes = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.diabetes = 2 THEN 'No' 
+                    ELSE '' 
+                END AS diabetesValue"),
+                'dambadiwa_crews.diabetes',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.highBloodPressure = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.highBloodPressure = 2 THEN 'No' 
+                    ELSE '' 
+                END AS highBloodPressureValue"),
+                'dambadiwa_crews.highBloodPressure',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.asthma = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.asthma = 2 THEN 'No' 
+                    ELSE '' 
+                END AS asthmaValue"),
+                'dambadiwa_crews.asthma',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.apoplexy = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.apoplexy = 2 THEN 'No' 
+                    ELSE '' 
+                END AS apoplexyValue"),
+                'dambadiwa_crews.apoplexy',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.heartDisease = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.heartDisease = 2 THEN 'No' 
+                    ELSE '' 
+                END AS heartDiseaseValue"),
+                'dambadiwa_crews.heartDisease',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.otherIllness = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.otherIllness = 2 THEN 'No' 
+                    ELSE '' 
+                END AS otherIllnessValue"),
+                'dambadiwa_crews.otherIllness',
+                'dambadiwa_crews.otherIllnessDescription',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.heartOtherOperation = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.heartOtherOperation = 2 THEN 'No' 
+                    ELSE '' 
+                END AS heartOtherOperationValue"),
+                'dambadiwa_crews.heartOtherOperation',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.artificialHandLeg = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.artificialHandLeg = 2 THEN 'No' 
+                    ELSE '' 
+                END AS artificialHandLegValue"),
+                'dambadiwa_crews.artificialHandLeg',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.mentalIllness = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.mentalIllness = 2 THEN 'No' 
+                    ELSE '' 
+                END AS mentalIllnessValue"),
+                'dambadiwa_crews.mentalIllness',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.forces = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.forces = 2 THEN 'No' 
+                    ELSE '' 
+                END AS forcesValue"),
+                'dambadiwa_crews.forces',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.forcesRemoval = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.forcesRemoval = 2 THEN 'No' 
+                    ELSE '' 
+                END AS forcesRemovalValue"),
+                'dambadiwa_crews.forcesRemoval',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.courtOrder = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.courtOrder = 2 THEN 'No' 
+                    ELSE '' 
+                END AS courtOrderValue"),
+                'dambadiwa_crews.courtOrder',
+            )
+            ->first();
+        }
+        else{
+            $crew = DB::table('dambadiwa_crews')
+            ->leftjoin('followers','dambadiwa_crews.crewId','dambadiwa_crews.crewId')
+            ->leftjoin('personal_infos', 'followers.id', '=', 'personal_infos.followerId')
+            ->leftjoin('contact_infos', 'followers.id', '=', 'contact_infos.followerId')
+            ->leftjoin('races', 'personal_infos.raceId', '=', 'races.id')
+            ->leftjoin('religions', 'personal_infos.religionId', '=', 'religions.id')
+            ->leftjoin('civil_statuses', 'personal_infos.civilStatusId', '=', 'civil_statuses.id')
+            ->leftjoin('districts', 'contact_infos.districtId', '=', 'districts.id')
+            ->leftjoin('monasteries', 'contact_infos.monasteryId', '=', 'monasteries.id')
+            ->where('dambadiwa_crews.crewId', $crew_id)
+            ->where('dambadiwa_crews.categoryId', $category_id)
+            ->where('dambadiwa_crews.active','1')
+            ->select(
+                'followers.id AS crewId','followers.name','followers.nic','followers.email','followers.nameWithInitials',
+                'personal_infos.birthDay','personal_infos.genderId',
+                DB::raw("CASE 
+                    WHEN personal_infos.genderId = 1 THEN 'Male' 
+                    WHEN personal_infos.genderId = 2 THEN 'Female' 
+                    ELSE '' 
+                END AS gender"),
+                'races.name AS race',
+                'religions.name AS religion',
+                'civil_statuses.name AS civilStatus',
+                'contact_infos.addressLine1',
+                'contact_infos.addressLine2',
+                'contact_infos.addressLine3',
+                'contact_infos.mobile1',
+                'contact_infos.mobile2',
+                'contact_infos.districtId',
+                'contact_infos.monasteryId',
+                'districts.name AS district',
+                'personal_infos.raceId',
+                'personal_infos.religionId',
+                'personal_infos.civilStatusId',
+                'monasteries.name AS monastary',
+                'dambadiwa_crews.guardian',
+                'dambadiwa_crews.guardianPhone',
+                'dambadiwa_crews.guardianEmail',
+                'dambadiwa_crews.birthPlace',
+                'dambadiwa_crews.occupation',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.previousAbroad = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.previousAbroad = 2 THEN 'No' 
+                    ELSE '' 
+                END AS previousAbroadName"),
+                'dambadiwa_crews.previousAbroad',
+                'dambadiwa_crews.spouse',
+                'dambadiwa_crews.spousebirthPlace',
+                'dambadiwa_crews.spouseOccupation',
+                'dambadiwa_crews.mother',
+                'dambadiwa_crews.motherBirthPlace',
+                'dambadiwa_crews.motherOccupation',
+                'dambadiwa_crews.father',
+                'dambadiwa_crews.fatherBirthPlace',
+                'dambadiwa_crews.fatherOccupation',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.passport = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.passport = 2 THEN 'No' 
+                    ELSE '' 
+                END AS passportValue"),
+                'dambadiwa_crews.passport',
+                'dambadiwa_crews.passportNo',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.policeReport = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.policeReport = 2 THEN 'No' 
+                    ELSE '' 
+                END AS policeReportValue"),
+                'dambadiwa_crews.policeReport',
+                'dambadiwa_crews.payment',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.diabetes = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.diabetes = 2 THEN 'No' 
+                    ELSE '' 
+                END AS diabetesValue"),
+                'dambadiwa_crews.diabetes',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.highBloodPressure = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.highBloodPressure = 2 THEN 'No' 
+                    ELSE '' 
+                END AS highBloodPressureValue"),
+                'dambadiwa_crews.highBloodPressure',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.asthma = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.asthma = 2 THEN 'No' 
+                    ELSE '' 
+                END AS asthmaValue"),
+                'dambadiwa_crews.asthma',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.apoplexy = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.apoplexy = 2 THEN 'No' 
+                    ELSE '' 
+                END AS apoplexyValue"),
+                'dambadiwa_crews.apoplexy',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.heartDisease = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.heartDisease = 2 THEN 'No' 
+                    ELSE '' 
+                END AS heartDiseaseValue"),
+                'dambadiwa_crews.heartDisease',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.otherIllness = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.otherIllness = 2 THEN 'No' 
+                    ELSE '' 
+                END AS otherIllnessValue"),
+                'dambadiwa_crews.otherIllness',
+                'dambadiwa_crews.otherIllnessDescription',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.heartOtherOperation = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.heartOtherOperation = 2 THEN 'No' 
+                    ELSE '' 
+                END AS heartOtherOperationValue"),
+                'dambadiwa_crews.heartOtherOperation',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.artificialHandLeg = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.artificialHandLeg = 2 THEN 'No' 
+                    ELSE '' 
+                END AS artificialHandLegValue"),
+                'dambadiwa_crews.artificialHandLeg',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.mentalIllness = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.mentalIllness = 2 THEN 'No' 
+                    ELSE '' 
+                END AS mentalIllnessValue"),
+                'dambadiwa_crews.mentalIllness',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.forces = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.forces = 2 THEN 'No' 
+                    ELSE '' 
+                END AS forcesValue"),
+                'dambadiwa_crews.forces',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.forcesRemoval = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.forcesRemoval = 2 THEN 'No' 
+                    ELSE '' 
+                END AS forcesRemovalValue"),
+                'dambadiwa_crews.forcesRemoval',
+                DB::raw("CASE 
+                    WHEN dambadiwa_crews.courtOrder = 1 THEN 'Yes' 
+                    WHEN dambadiwa_crews.courtOrder = 2 THEN 'No' 
+                    ELSE '' 
+                END AS courtOrderValue"),
+                'dambadiwa_crews.courtOrder',
+            )
+            ->first();
+        }
+
         $option = [
             'Dashboard' => 'dambadiwa.dashboard',
-            'Dambadiwa Project Profile' => function () use ($id) {
-                return route('dambadiwa.project', ['id' => $id]);
+            'Dambadiwa Project Profile' => function () use ($projectId) {
+                return route('dambadiwa.project', ['id' => $projectId]);
             },
         ];
-        return view('dambadiwa/crewlist',compact('option', 'projectSlug'));
+        return view('dambadiwa/crewprofile',compact('option','projectId','crew_id','category_id','crew','races','religions','civilStatuses','genders','monasteries','districts','yesNo'));
+    }
+
+    public function edit_crew_profile(Request $request){
+        $projectId = $request->query('project_id');
+        $crew_id = $request->query('crew_id');
+        $category_id = $request->query('category_id');
+
+        if($category_id == 1){
+            $user = User::where('id',$crew_id)->update(
+                [
+                    'name'=>$request->name,
+                    'nameWithInitials' => $request->nameWithInitials,
+                    'nic' => $request->nic,
+                    'email' => $request->email,
+                ]
+            );
+
+            $UserContactInfo = UserContactInfo::where('userId',$crew_id)->update([
+                'addressLine1' => ucwords(strtolower($request->addressLine1)),
+                'addressLine2' => ucwords(strtolower($request->addressLine2)),
+                'addressLine3' => ucwords(strtolower($request->addressLine3)),
+                'mobile1' => $request->mobile1,
+                'mobile2' => $request->mobile2,
+            ]);
+
+            $userpersonalInfo = UserPersonalInfo::where('userId',$crew_id)->update([
+                'raceId' => $request->race,
+                'religionId' => $request->religion,
+                'civilStatusId' => $request->civilStatus,
+                'genderId' => $request->gender,
+                'birthDay' => $request->birthDay,
+            ]);
+
+            $dambadiwa_crew_existing = DambadiwaCrew::where('crewId',$crew_id)->where('categoryId',$category_id)
+            ->where('active', 1)
+            ->first();
+
+            if ($request->hasFile('passportImage')) {
+                $uploadPath = public_path('attachments/passport/');
+
+                $existingPassportImage = $dambadiwa_crew_existing->passportImage;
+                if ($existingPassportImage && file_exists($uploadPath . $existingPassportImage)) {
+                    unlink($uploadPath . $existingPassportImage);
+                }
+
+                $passportImage = 'Passport-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('passportImage')->getClientOriginalExtension();
+                $passportImageMove = $request->file('passportImage')->move(public_path('attachments/passport/'), $passportImage);
+            }
+            else{
+                $passportImage = $dambadiwa_crew_existing->passportImage;
+            }
+
+            if ($request->hasFile('passportBookImage')) {
+                $uploadPath = public_path('attachments/passport/');
+
+                $existingpassportBookImage = $dambadiwa_crew_existing->passportBookImage;
+                if ($existingpassportBookImage && file_exists($uploadPath . $existingpassportBookImage)) {
+                    unlink($uploadPath . $existingpassportBookImage);
+                }
+                $passportBookImage = 'Passport-Book-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('passportBookImage')->getClientOriginalExtension();
+                $passportBookImageMove = $request->file('passportBookImage')->move(public_path('attachments/passport/'), $passportBookImage);
+            }else{
+                $passportBookImage = $dambadiwa_crew_existing->passportBookImage;
+            }
+
+            if ($request->hasFile('visaDocument')) {
+                $uploadPath = public_path('attachments/visa/');
+
+                $existingvisaDocument = $dambadiwa_crew_existing->visaDocument;
+                if ($existingvisaDocument && file_exists($uploadPath . $existingvisaDocument)) {
+                    unlink($uploadPath . $existingvisaDocument);
+                }
+                $visaDocument = 'Visa-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('visaDocument')->getClientOriginalExtension();
+                $visaDocumentMove = $request->file('visaDocument')->move(public_path('attachments/visa/'), $visaDocument);
+            }else{
+                $visaDocument = $dambadiwa_crew_existing->visaDocument;
+            }
+
+            if ($request->hasFile('policeReportDocument')) {
+                $uploadPath = public_path('attachments/policereport/');
+
+                $existingpoliceReportDocument = $dambadiwa_crew_existing->policeReportDocument;
+                if ($existingpoliceReportDocument && file_exists($uploadPath . $existingpoliceReportDocument)) {
+                    unlink($uploadPath . $existingpoliceReportDocument);
+                }
+                $policeReportDocument = 'Police-Report-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('policeReportDocument')->getClientOriginalExtension();
+                $policeReportDocumentMove = $request->file('policeReportDocument')->move(public_path('attachments/policereport/'), $policeReportDocument);
+            }else{
+                $policeReportDocument = $dambadiwa_crew_existing->policeReportDocument;
+            }
+
+            if ($request->hasFile('birthCertificate')) {
+                $uploadPath = public_path('attachments/birthCertificate/');
+
+                $existingbirthCertificate = $dambadiwa_crew_existing->birthCertificate;
+                if ($existingbirthCertificate && file_exists($uploadPath . $existingbirthCertificate)) {
+                    unlink($uploadPath . $existingbirthCertificate);
+                }
+                $birthCertificate = 'Police-Report-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('birthCertificate')->getClientOriginalExtension();
+                $birthCertificateMove = $request->file('birthCertificate')->move(public_path('attachments/birthCertificate/'), $birthCertificate);
+            }else{
+                $birthCertificate = $dambadiwa_crew_existing->birthCertificate;
+            }
+
+            if ($request->hasFile('medicalDocument')) {
+                $uploadPath = public_path('attachments/medicalDocument/');
+
+                $existingmedicalDocument = $dambadiwa_crew_existing->medicalDocument;
+                if ($existingmedicalDocument && file_exists($uploadPath . $existingmedicalDocument)) {
+                    unlink($uploadPath . $existingmedicalDocument);
+                }
+                $medicalDocument = 'Police-Report-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('medicalDocument')->getClientOriginalExtension();
+                $medicalDocumentMove = $request->file('medicalDocument')->move(public_path('attachments/medicalDocument/'), $medicalDocument);
+            }else{
+                $medicalDocument = $dambadiwa_crew_existing->medicalDocument;
+            }
+
+            $dambadiwa_crew = DambadiwaCrew::where('crewId',$crew_id)->where('categoryId',$category_id)->where('active', 1)->update([
+                'guardian' => $request->guardian,
+                'guardianPhone' => $request->guardianPhone,
+                'guardianEmail' => $request->guardianEmail,
+                'birthPlace' => $request->birthPlace,
+                'occupation' => $request->occupation,
+                'previousAbroad' => $request->previousAbroad,
+                'spouse' => $request->spouse,
+                'spousebirthPlace' => $request->spousebirthPlace,
+                'spouseOccupation' => $request->spouseOccupation,
+                'mother' => $request->mother,
+                'motherBirthPlace' => $request->motherBirthPlace,
+                'motherOccupation' => $request->motherOccupation,
+                'father' => $request->father,
+                'fatherBirthPlace' => $request->fatherBirthPlace,
+                'fatherOccupation' => $request->fatherOccupation,
+                'passport' => $request->passport,
+                'passportNo' => $request->passportNo,
+                'passportImage' => $passportImage,
+                'passportBookImage' => $passportBookImage,
+                'policeReportDocument' => $policeReportDocument,
+                'birthCertificate' => $birthCertificate,
+                'payment' => $request->payment,
+                'diabetes' => $request->diabetes,
+                'highBloodPressure' => $request->highBloodPressure,
+                'asthma' => $request->asthma,
+                'apoplexy' => $request->apoplexy,
+                'heartDisease' => $request->heartDisease,
+                'otherIllness' => $request->otherIllness,
+                'otherIllnessDescription' => $request->otherIllnessDescription,
+                'heartOtherOperation' => $request->heartOtherOperation,
+                'artificialHandLeg' => $request->artificialHandLeg,
+                'mentalIllness' => $request->mentalIllness,
+                'medicalDocument' => $medicalDocument,
+                'forces' => $request->forces,
+                'forcesRemoval' => $request->forcesRemoval,
+                'courtOrder' => $request->courtOrder,
+            ]);
+
+            return redirect()->back()->with('success','Update Successfull');
+        }
+        if($category_id == 2){
+            $follower = Follower::where('id',$crew_id)->update(
+                [
+                    'name'=>$request->name,
+                    'nameWithInitials' => $request->nameWithInitials,
+                    'nic' => $request->nic,
+                    'email' => $request->email,
+                ]
+            );
+
+            $contactInfo = ContactInfo::where('followerId',$crew_id)->update([
+                'addressLine1' => ucwords(strtolower($request->addressLine1)),
+                'addressLine2' => ucwords(strtolower($request->addressLine2)),
+                'addressLine3' => ucwords(strtolower($request->addressLine3)),
+                'districtId' => $request->district,
+                'monasteryId' => $request->monastery,
+                'mobile1' => $request->mobile1,
+                'mobile2' => $request->mobile2,
+            ]);
+
+            $personalInfo = PersonalInfo::where('followerId',$crew_id)->update([
+                'raceId' => $request->race,
+                'religionId' => $request->religion,
+                'civilStatusId' => $request->civilStatus,
+                'genderId' => $request->gender,
+                'birthDay' => $request->birthDay,
+            ]);
+
+            $dambadiwa_crew_existing = DambadiwaCrew::where('crewId',$crew_id)->where('categoryId',$category_id)
+            ->where('active', 1)
+            ->first();
+
+            if ($request->hasFile('passportImage')) {
+                $uploadPath = public_path('attachments/passport/');
+
+                $existingPassportImage = $dambadiwa_crew_existing->passportImage;
+                if ($existingPassportImage && file_exists($uploadPath . $existingPassportImage)) {
+                    unlink($uploadPath . $existingPassportImage);
+                }
+
+                $passportImage = 'Passport-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('passportImage')->getClientOriginalExtension();
+                $passportImageMove = $request->file('passportImage')->move(public_path('attachments/passport/'), $passportImage);
+            }
+            else{
+                $passportImage = $dambadiwa_crew_existing->passportImage;
+            }
+
+            if ($request->hasFile('passportBookImage')) {
+                $uploadPath = public_path('attachments/passport/');
+
+                $existingpassportBookImage = $dambadiwa_crew_existing->passportBookImage;
+                if ($existingpassportBookImage && file_exists($uploadPath . $existingpassportBookImage)) {
+                    unlink($uploadPath . $existingpassportBookImage);
+                }
+                $passportBookImage = 'Passport-Book-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('passportBookImage')->getClientOriginalExtension();
+                $passportBookImageMove = $request->file('passportBookImage')->move(public_path('attachments/passport/'), $passportBookImage);
+            }else{
+                $passportBookImage = $dambadiwa_crew_existing->passportBookImage;
+            }
+
+            if ($request->hasFile('visaDocument')) {
+                $uploadPath = public_path('attachments/visa/');
+
+                $existingvisaDocument = $dambadiwa_crew_existing->visaDocument;
+                if ($existingvisaDocument && file_exists($uploadPath . $existingvisaDocument)) {
+                    unlink($uploadPath . $existingvisaDocument);
+                }
+                $visaDocument = 'Visa-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('visaDocument')->getClientOriginalExtension();
+                $visaDocumentMove = $request->file('visaDocument')->move(public_path('attachments/visa/'), $visaDocument);
+            }else{
+                $visaDocument = $dambadiwa_crew_existing->visaDocument;
+            }
+
+            if ($request->hasFile('policeReportDocument')) {
+                $uploadPath = public_path('attachments/policereport/');
+
+                $existingpoliceReportDocument = $dambadiwa_crew_existing->policeReportDocument;
+                if ($existingpoliceReportDocument && file_exists($uploadPath . $existingpoliceReportDocument)) {
+                    unlink($uploadPath . $existingpoliceReportDocument);
+                }
+                $policeReportDocument = 'Police-Report-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('policeReportDocument')->getClientOriginalExtension();
+                $policeReportDocumentMove = $request->file('policeReportDocument')->move(public_path('attachments/policereport/'), $policeReportDocument);
+            }else{
+                $policeReportDocument = $dambadiwa_crew_existing->policeReportDocument;
+            }
+
+            if ($request->hasFile('birthCertificate')) {
+                $uploadPath = public_path('attachments/birthCertificate/');
+
+                $existingbirthCertificate = $dambadiwa_crew_existing->birthCertificate;
+                if ($existingbirthCertificate && file_exists($uploadPath . $existingbirthCertificate)) {
+                    unlink($uploadPath . $existingbirthCertificate);
+                }
+                $birthCertificate = 'Police-Report-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('birthCertificate')->getClientOriginalExtension();
+                $birthCertificateMove = $request->file('birthCertificate')->move(public_path('attachments/birthCertificate/'), $birthCertificate);
+            }else{
+                $birthCertificate = $dambadiwa_crew_existing->birthCertificate;
+            }
+
+            if ($request->hasFile('medicalDocument')) {
+                $uploadPath = public_path('attachments/medicalDocument/');
+
+                $existingmedicalDocument = $dambadiwa_crew_existing->medicalDocument;
+                if ($existingmedicalDocument && file_exists($uploadPath . $existingmedicalDocument)) {
+                    unlink($uploadPath . $existingmedicalDocument);
+                }
+                $medicalDocument = 'Police-Report-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('medicalDocument')->getClientOriginalExtension();
+                $medicalDocumentMove = $request->file('medicalDocument')->move(public_path('attachments/medicalDocument/'), $medicalDocument);
+            }else{
+                $medicalDocument = $dambadiwa_crew_existing->medicalDocument;
+            }
+
+            $dambadiwa_crew = DambadiwaCrew::where('crewId',$crew_id)->where('categoryId',$category_id)->where('active', 1)->update([
+                'guardian' => $request->guardian,
+                'guardianPhone' => $request->guardianPhone,
+                'guardianEmail' => $request->guardianEmail,
+                'birthPlace' => $request->birthPlace,
+                'occupation' => $request->occupation,
+                'previousAbroad' => $request->previousAbroad,
+                'spouse' => $request->spouse,
+                'spousebirthPlace' => $request->spousebirthPlace,
+                'spouseOccupation' => $request->spouseOccupation,
+                'mother' => $request->mother,
+                'motherBirthPlace' => $request->motherBirthPlace,
+                'motherOccupation' => $request->motherOccupation,
+                'father' => $request->father,
+                'fatherBirthPlace' => $request->fatherBirthPlace,
+                'fatherOccupation' => $request->fatherOccupation,
+                'passport' => $request->passport,
+                'passportNo' => $request->passportNo,
+                'passportImage' => $passportImage,
+                'passportBookImage' => $passportBookImage,
+                'policeReportDocument' => $policeReportDocument,
+                'birthCertificate' => $birthCertificate,
+                'payment' => $request->payment,
+                'diabetes' => $request->diabetes,
+                'highBloodPressure' => $request->highBloodPressure,
+                'asthma' => $request->asthma,
+                'apoplexy' => $request->apoplexy,
+                'heartDisease' => $request->heartDisease,
+                'otherIllness' => $request->otherIllness,
+                'otherIllnessDescription' => $request->otherIllnessDescription,
+                'heartOtherOperation' => $request->heartOtherOperation,
+                'artificialHandLeg' => $request->artificialHandLeg,
+                'mentalIllness' => $request->mentalIllness,
+                'medicalDocument' => $medicalDocument,
+                'forces' => $request->forces,
+                'forcesRemoval' => $request->forcesRemoval,
+                'courtOrder' => $request->courtOrder,
+            ]);
+
+            return redirect()->back()->with('success','Update Successfull');
+        }
     }
 
     /**
