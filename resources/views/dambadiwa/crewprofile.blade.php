@@ -15,18 +15,16 @@
                             <x-form-text-input-section size="" name="addressLine1" id="addressLine1" label="Address Line 1" value="{{ $crew->addressLine1 }}"/>
                             <x-form-text-input-section size="" name="addressLine2" id="addressLine2" label="Address Line 2" value="{{ $crew->addressLine2 }}"/>
                             <x-form-text-input-section size="" name="addressLine3" id="addressLine3" label="Address Line 3" value="{{ $crew->addressLine3 }}"/>
-                            @if($category_id == 2){
+                            @if($category_id == 2)
                                 <x-form-list-input-section-edit size="" name="district" id="district" :options="$districts" label="District" value="{{ $crew->districtId }}" :valuename="$crew->district" />
-                            }
                             @endif
                             <x-form-text-input-section size="" name="mobile1" id="mobile1" label="Mobile" value="{{ $crew->mobile1 }}"/>
                             <x-form-text-input-section size="" name="mobile2" id="mobile2" label="Whatapp" value="{{ $crew->mobile2 }}"/>
                             <x-form-list-input-section-edit size="" name="race" id="race" :options="$races" label="Race" value="{{ $crew->raceId }}" :valuename="$crew->race"/>
                             <x-form-list-input-section-edit size="" name="religion" id="religion" :options="$religions" label="Birth Religion" value="{{ $crew->religionId }}" :valuename="$crew->religion"/>
                             <x-form-list-input-section-edit size="" name="civilStatus" id="civilStatus" :options="$civilStatuses" label="Civil Status" value="{{ $crew->civilStatusId }}" :valuename="$crew->civilStatus"/>
-                            @if($category_id == 2){
+                            @if($category_id == 2)
                                 <x-form-list-input-section-edit size="" name="monastery" id="monastery" :options="$monasteries" label="Nearest Mahamewnawa Monastery" value="{{ $crew->monasteryId }}" :valuename="$crew->monastary"/>
-                            }
                             @endif
                             <x-form-date-input-section-edit size="" name="birthDay" id="birthDay" label="Birth Day" value="{{ $crew->birthDay }}"/>
                             <x-form-list-input-section-edit size="" name="gender" id="gender" :options="$genders" label="Gender" value="{{ $crew->genderId }}" :valuename="$crew->gender"/>

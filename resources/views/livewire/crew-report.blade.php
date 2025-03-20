@@ -54,11 +54,17 @@
             <x-form-list-input-field name="courtOrder" id="courtOrder" :options="$optionList" wire:model.live="courtOrder" required/>
         </div>
     </form>
+
     <div class="flex flex-col">
         <div class="-m-1.5 overflow-x-auto">
             <div class="p-1.5 min-w-full inline-block align-middle">
+                <div class="my-3">
+                    <a href="{{ route('dambadiwa.crewlistreportpdf', ['project_id'=>$projectId,'crew_type'=>$crew_type,'category'=>$category, 'diabetes'=>$diabetes,'highBloodPressure'=>$highBloodPressure,'asthma'=>$asthma,'apoplexy'=>$apoplexy,'heartDisease'=>$heartDisease,'otherIllness'=>$otherIllness,'heartOtherOperation'=>$heartOtherOperation,'artificialHandLeg'=>$artificialHandLeg,'mentalIllness'=>$mentalIllness,'forces'=>$forces,'forcesRemoval'=>$forcesRemoval,'courtOrder'=>$courtOrder]) }}" class="mt-1 text-xs leading-5 bg-red-500 hover:bg-red-700 p-2 rounded-md text-white mx-2 mb-3 text-center" target="_blank">PDF</a>
+
+                    <a href="{{ route('dambadiwa.crewlistreportexcel', ['project_id'=>$projectId,'crew_type'=>$crew_type,'category'=>$category, 'diabetes'=>$diabetes,'highBloodPressure'=>$highBloodPressure,'asthma'=>$asthma,'apoplexy'=>$apoplexy,'heartDisease'=>$heartDisease,'otherIllness'=>$otherIllness,'heartOtherOperation'=>$heartOtherOperation,'artificialHandLeg'=>$artificialHandLeg,'mentalIllness'=>$mentalIllness,'forces'=>$forces,'forcesRemoval'=>$forcesRemoval,'courtOrder'=>$courtOrder]) }}" class="mt-1 text-xs leading-5 bg-green-500 hover:bg-green-700 p-2 rounded-md text-white mb-3 text-center" target="_blank">Excel</a>
+                </div>
                 <div class="overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 border">
                     <thead>
                     <tr>
                         @if (!empty($results))
@@ -96,24 +102,25 @@
                             }
                         @endphp
                         <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 {{ $bg_color }}">{{ $results->firstItem() + $index }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->userName }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nameWithInitials }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nic }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->category }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->diabetes }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->highBloodPressure }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->asthma }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->apoplexy }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->heartDisease }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->otherIllness }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->heartOtherOperation }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->artificialHandLeg }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->mentalIllness }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->forces }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->forcesRemoval }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->courtOrder }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                            <td class="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-800"><a href="{{ route('dambadiwa.crewreportpdf', ['project_id'=>$projectId,'crew_id' => $result->crewId, 'category_id' => $result->categoryId]) }}" class="text-xs leading-5 bg-red-500 hover:bg-red-700 p-2 rounded-md text-white text-center" target="_blank">Pdf</a></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center {{ $bg_color }}">{{ $results->firstItem() + $index }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->userName }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nameWithInitials }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nic }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->category }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->diabetes }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->highBloodPressure }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->asthma }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->apoplexy }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->heartDisease }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->otherIllness }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->heartOtherOperation }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->artificialHandLeg }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->mentalIllness }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->forces }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->forcesRemoval }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->courtOrder }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
                             <a href="{{ route('dambadiwa.crewprofile', ['project_id' => $projectId, 'crew_id' => $result->crewId, 'category_id' => $result->categoryId]) }}" class="text-blue" >
                             <x-form-button-danger size="" text="Edit" modelBinding="" name="editCrew" /></td>
                             </a>

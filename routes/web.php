@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\DambadiwaProjectController;
+use App\Http\Controllers\PdfController;
+use App\Http\Controllers\ExcelController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,6 +62,9 @@ Route::get('/dambadiwa/project/crewlist', [DambadiwaProjectController::class, 'c
 Route::get('/dambadiwa/project/{id}/crewreport', [DambadiwaProjectController::class, 'crewreport'])->name('dambadiwa.crewreport');
 Route::get('/dambadiwa/project/crewprofile/', [DambadiwaProjectController::class, 'crewprofile'])->name('dambadiwa.crewprofile');
 Route::post('/dambadiwa/project/edit_crew_profile/', [DambadiwaProjectController::class, 'edit_crew_profile'])->name('dambadiwa.edit_crew_profile');
+Route::get('/dambadiwa/project/crewlistreportpdf/', [PdfController::class, 'crewlistreportpdf'])->name('dambadiwa.crewlistreportpdf');
+Route::get('/dambadiwa/project/crewreportpdf/', [PdfController::class, 'crewreportpdf'])->name('dambadiwa.crewreportpdf');
+Route::get('/dambadiwa/project/crewlistreportexcel/', [ExcelController::class, 'crewlistreportexcel'])->name('dambadiwa.crewlistreportexcel');
 
 
 require __DIR__.'/auth.php';
