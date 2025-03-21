@@ -119,7 +119,13 @@ class CrewReport extends Component
                 WHEN dambadiwa_crews.courtOrder = 1 THEN "yes" 
                 WHEN dambadiwa_crews.courtOrder = 2 THEN "no" 
                 ELSE "" 
-                END AS courtOrder')
+                END AS courtOrder'),
+            'dambadiwa_crews.passportImage',
+            'dambadiwa_crews.passportBookImage',
+            'dambadiwa_crews.visaDocument',
+            'dambadiwa_crews.policeReportDocument',
+            'dambadiwa_crews.birthCertificate',
+            'dambadiwa_crews.medicalDocument',
         )
         ->where('dambadiwa_crews.projectId', $this->projectId)
         ->where('dambadiwa_crews.active', 1)

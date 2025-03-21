@@ -68,11 +68,18 @@
                     <thead>
                     <tr>
                         @if (!empty($results))
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"></th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">#</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name With Initials</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">NIC</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Category</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Passport</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Passport Book</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Visa Document</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Police Report Document</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Birth Certificate</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Medical Document</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Diabetes</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">High Blood Pressure</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Asthma</th>
@@ -85,7 +92,6 @@
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Forces</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Forces Removal</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Court Order</th>
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">#</th>
                         @endif      
                     </tr>
                     </thead>
@@ -102,12 +108,21 @@
                             }
                         @endphp
                         <tr>
-                            <td class="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-800"><a href="{{ route('dambadiwa.crewreportpdf', ['project_id'=>$projectId,'crew_id' => $result->crewId, 'category_id' => $result->categoryId]) }}" class="text-xs leading-5 bg-red-500 hover:bg-red-700 p-2 rounded-md text-white text-center" target="_blank">Pdf</a></td>
+                            <td class="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-800">
+                                <a href="{{ route('dambadiwa.crewreportpdf', ['project_id'=>$projectId,'crew_id' => $result->crewId, 'category_id' => $result->categoryId]) }}" class="text-xs leading-5 bg-red-500 hover:bg-red-700 p-2 rounded-md text-white text-center" target="_blank">Pdf</a>
+                                <a href="{{ route('dambadiwa.crewprofile', ['project_id' => $projectId, 'crew_id' => $result->crewId, 'category_id' => $result->categoryId]) }}" class="text-xs leading-5 bg-yellow-500 hover:bg-yellow-700 p-2 rounded-md text-white text-center" >Edit</a>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center {{ $bg_color }}">{{ $results->firstItem() + $index }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->userName }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nameWithInitials }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nic }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->category }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/passport/{{ $result->passportImage }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/passport/{{ $result->passportBookImage }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/visa/{{ $result->visaDocument }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/policereport/{{ $result->policeReportDocument }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/birthCertificate/{{ $result->birthCertificate }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/medicalDocument/{{ $result->medicalDocument }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->diabetes }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->highBloodPressure }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->asthma }}</td>
@@ -120,10 +135,6 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->forces }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->forcesRemoval }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->courtOrder }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            <a href="{{ route('dambadiwa.crewprofile', ['project_id' => $projectId, 'crew_id' => $result->crewId, 'category_id' => $result->categoryId]) }}" class="text-blue" >
-                            <x-form-button-danger size="" text="Edit" modelBinding="" name="editCrew" /></td>
-                            </a>
                         </tr>
                         @endforeach
                     </tbody>

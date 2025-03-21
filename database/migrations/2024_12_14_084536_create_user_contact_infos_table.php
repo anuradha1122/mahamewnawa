@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('addressLine1', 80)->required();
             $table->string('addressLine2', 80)->required();
             $table->string('addressLine3', 80)->required();
+            $table->mediumInteger('districtId')->unsigned()->required();
+            $table->mediumInteger('monasteryId')->unsigned()->required();
             $table->string('mobile1', 10)->required()->unique();
             $table->string('mobile2', 10)->required()->nullable();
             $table->tinyInteger('active')->default(1)->required();

@@ -9,14 +9,24 @@
     .center {
         text-align: center;
     }
+    footer {
+      position: fixed; 
+      bottom: 0px; 
+      left: 0px; 
+      right: 0px;
+      height: 80px; 
+    }
   </style>
 </head>
   <body>
 
-    <div style="border: 1px solid #333; border-radius: 5px; text-align: center; padding: 10px;">
-      <h1 style="font-size: 28px; font-weight: 700; line-height: 1.25rem;">Mahamewnawa</h1>
-      <h1 style="font-size: 20px; font-weight: 700; line-height: 1.25rem;">Dambadiwa Crew List Report</h1>
+    <div style="border-bottom: 1px solid #7c0404;">
+      <img src="{{ public_path("images/letter-head.png") }}" alt="Letter Heaad" width="100%">
     </div>
+
+    <footer>
+      <img src="{{ public_path("images/footer.png") }}" alt="Footer" width="100%">
+    </footer>
 
     <div class="center">
       <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">

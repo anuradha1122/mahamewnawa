@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="py-3">
         <div class="mx-auto sm:px-2">
-            <x-breadcrumb :list="$option" />
             <div class="isolate bg-white px-6 py-10 sm:py-10 lg:px-8">
+                <x-breadcrumb :list="$option" />
                 <x-form-success message="{{ session('success') }}" />
                 <x-profile-heading heading="{{ $crew->nameWithInitials }}" subHeading="{{ $crew->nic }}" />
                     <form method="POST" action="{{ route('dambadiwa.edit_crew_profile', ['project_id' => $projectId, 'crew_id' => $crew_id,'category_id' => $category_id]) }}" class="mx-auto" enctype="multipart/form-data">

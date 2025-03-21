@@ -62,8 +62,7 @@ class DambadiwaProjectController extends Controller
             ['test 5', 3]
         ];
         $option = [
-            'Dashboard' => 'dashboard',
-            'Dambadiwa Dashboard' => 'dambadiwa.dashboard',
+            'Dambadiwa' => '',
         ];
 
         $card_pack_1 = collect([]);
@@ -87,8 +86,8 @@ class DambadiwaProjectController extends Controller
     public function crew(Request $request)
     {
         $option = [
-            'Dashboard' => 'dambadiwa.dashboard',
-            'Dambadiwa Crew' => 'dambadiwa.crew'
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Dambadiwa Crew' => ''
         ];
 
         if($request->has('id')){
@@ -117,8 +116,8 @@ class DambadiwaProjectController extends Controller
     {
 
         $option = [
-            'Dashboard' => 'dambadiwa.dashboard',
-            'Dambadiwa Project Registration' => 'dambadiwa.register'
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Dambadiwa Project Registration' => ''
         ];
         return view('dambadiwa/register',compact('option'));
     }
@@ -129,8 +128,7 @@ class DambadiwaProjectController extends Controller
     public function store(StoreDambadiwaProjectRequest $request)
     {
         $option = [
-            'Dashboard' => 'dambadiwa.dashboard',
-            'Dambadiwa Project Registration' => 'dambadiwa.register'
+            'Dambadiwa Project Registration' => route('dambadiwa.register'),
         ];
 
         $dambadiwaProject = DambadiwaProject::create([
@@ -167,7 +165,10 @@ class DambadiwaProjectController extends Controller
             ["test 4", 10],
             ['test 5', 3]
         ];
-        $option = ['Dashboard' => 'dambadiwa.dashboard'];
+        $option = [
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Project' => '',
+        ];
 
         $card_pack_1 = collect([
             (object) [
@@ -190,10 +191,9 @@ class DambadiwaProjectController extends Controller
         $crew_type = $request->query('crew_type');
 
         $option = [
-            'Dashboard' => 'dambadiwa.dashboard',
-            'Dambadiwa Project Profile' => function () use ($projectId) {
-                return route('dambadiwa.project', ['id' => $projectId]);
-            },
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Project' => route('dambadiwa.project', ['id' => $projectId]),
+            'Crew List' => '',
         ];
         return view('dambadiwa/crewlist',compact('option', 'projectId', 'crew_type'));
     }
@@ -204,10 +204,9 @@ class DambadiwaProjectController extends Controller
         $projectId = $request->query('id');
 
         $option = [
-            'Dashboard' => 'dambadiwa.dashboard',
-            'Dambadiwa Project Profile' => function () use ($projectId) {
-                return route('dambadiwa.project', ['id' => $projectId]);
-            },
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Project' => route('dambadiwa.project', ['id' => $projectId]),
+            'Search Crew' => '',
         ];
 
         return view('dambadiwa/crewregister',compact('option', 'projectId'));
@@ -219,10 +218,8 @@ class DambadiwaProjectController extends Controller
         $crew_type = $request->query('crew_type');
 
         $option = [
-            'Dashboard' => 'dambadiwa.dashboard',
-            'Dambadiwa Project Profile' => function () use ($projectId) {
-                return route('dambadiwa.project', ['id' => $projectId]);
-            },
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Project' => route('dambadiwa.project', ['id' => $projectId]),
         ];
         return view('dambadiwa/crewlist',compact('option', 'projectId','crew_type'));
     }
@@ -539,10 +536,10 @@ class DambadiwaProjectController extends Controller
         }
 
         $option = [
-            'Dashboard' => 'dambadiwa.dashboard',
-            'Dambadiwa Project Profile' => function () use ($projectId) {
-                return route('dambadiwa.project', ['id' => $projectId]);
-            },
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Project' => route('dambadiwa.project', ['id' => $projectId]),
+            'Crew List' => route('dambadiwa.crewlist', ['id' => $projectId,'crew_type' => $category_id]),
+            'Crew Profile' => '',
         ];
         return view('dambadiwa/crewprofile',compact('option','projectId','crew_id','category_id','crew','races','religions','civilStatuses','genders','monasteries','districts','yesNo'));
     }
@@ -796,7 +793,7 @@ class DambadiwaProjectController extends Controller
                 if ($existingbirthCertificate && file_exists($uploadPath . $existingbirthCertificate)) {
                     unlink($uploadPath . $existingbirthCertificate);
                 }
-                $birthCertificate = 'Police-Report-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('birthCertificate')->getClientOriginalExtension();
+                $birthCertificate = 'Birth-Certificate-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('birthCertificate')->getClientOriginalExtension();
                 $birthCertificateMove = $request->file('birthCertificate')->move(public_path('attachments/birthCertificate/'), $birthCertificate);
             }else{
                 $birthCertificate = $dambadiwa_crew_existing->birthCertificate;
@@ -809,7 +806,7 @@ class DambadiwaProjectController extends Controller
                 if ($existingmedicalDocument && file_exists($uploadPath . $existingmedicalDocument)) {
                     unlink($uploadPath . $existingmedicalDocument);
                 }
-                $medicalDocument = 'Police-Report-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('medicalDocument')->getClientOriginalExtension();
+                $medicalDocument = 'Medical-Document-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('medicalDocument')->getClientOriginalExtension();
                 $medicalDocumentMove = $request->file('medicalDocument')->move(public_path('attachments/medicalDocument/'), $medicalDocument);
             }else{
                 $medicalDocument = $dambadiwa_crew_existing->medicalDocument;
