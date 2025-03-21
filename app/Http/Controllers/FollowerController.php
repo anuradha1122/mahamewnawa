@@ -31,7 +31,7 @@ class FollowerController extends Controller
             ["Children's Boos", 10],
             ['Other', 3]
         ];
-        $option = ['Dashboard' => 'follower.dashboard'];
+        $option = ['Followers' => ''];
         
         $card_pack_1 = collect([
             (object) [
@@ -107,8 +107,8 @@ class FollowerController extends Controller
         $districts = District::where('active', 1)->get();
 
         $option = [
-            'Dashboard' => 'follower.dashboard',
-            'Follower Registration' => 'follower.register'
+            'Followers' => route('follower.dashboard'),
+            'Follower Registration' => '',
         ];
         return view('follower/register',compact('option','races','religions','civilStatuses','genders','monasteries','districts'));
     }
@@ -125,8 +125,8 @@ class FollowerController extends Controller
         $districts = District::where('active', 1)->get();
     
         $option = [
-            'Dashboard' => 'follower.dashboard',
-            'Follower Registration' => 'follower.register'
+            'Followers' => route('follower.dashboard'),
+            'Follower Registration' => '',
         ];
         //dd($request);
         //$validatedData = $request->validated();
@@ -183,9 +183,9 @@ class FollowerController extends Controller
     public function profile(Request $request)
     {
         $option = [
-            'Follower Dashboard' => 'follower.dashboard',
-            'Follower Search' => 'follower.search',
-            'Follower Profile' => 'follower.profile'
+            'Followers' => route('follower.dashboard'),
+            'Follower Search' => route('follower.search'),
+            'Follower Profile' => '',
         ];
         if($request->has('id')){
             $follower = Follower::leftjoin('personal_infos', 'followers.id', '=', 'personal_infos.followerId')
@@ -223,8 +223,8 @@ class FollowerController extends Controller
     public function search()
     {
         $option = [
-            'Follower Dashboard' => 'follower.dashboard',
-            'Follower Search' => 'follower.search'
+            'Followers' => route('follower.dashboard'),
+            'Follower Search' => '',
         ];
         return view('follower/search',compact('option'));
     }
@@ -232,8 +232,8 @@ class FollowerController extends Controller
     public function reports()
     {
         $option = [
-            'Follower Dashboard' => 'follower.dashboard',
-            'Follower Reports' => 'follower.reports'
+            'Followers' => route('follower.dashboard'),
+            'Follower Reports' => ''
         ];
         return view('follower/reports',compact('option'));
     }

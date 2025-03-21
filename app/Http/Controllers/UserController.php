@@ -70,7 +70,7 @@ class UserController extends Controller
         //     ["Children's Boos", 10],
         //     ['Other', 3]
         // ];
-        $option = ['Dashboard' => 'user.dashboard'];
+        $option = ['Users' => ''];
         
         $card_pack_1 = collect([
             (object) [
@@ -110,8 +110,8 @@ class UserController extends Controller
         $positions = Position::where('active', 1)->get();
 
         $option = [
-            'Dashboard' => 'user.dashboard',
-            'User Registration' => 'user.register'
+            'Users' => route('user.dashboard'),
+            'User Registration' => '',
         ];
         return view('user/register',compact('option','races','religions','civilStatuses','genders','monasteries','userCategories','positions'));
     }
@@ -127,8 +127,8 @@ class UserController extends Controller
         $positions = Position::where('active', 1)->get();
 
         $option = [
-            'Dashboard' => 'user.dashboard',
-            'User Registration' => 'user.register'
+            'Users' => route('user.dashboard'),
+            'User Registration' => '',
         ];
         //dd($request);
         //$validatedData = $request->validated();
@@ -198,8 +198,8 @@ class UserController extends Controller
     public function search()
     {
         $option = [
-            'User Dashboard' => 'user.dashboard',
-            'User Search' => 'user.search'
+            'Users' => route('user.dashboard'),
+            'User Search' => '',
         ];
         return view('user/search',compact('option'));
     }
@@ -207,9 +207,9 @@ class UserController extends Controller
     public function profile(Request $request)
     {
         $option = [
-            'User Dashboard' => 'user.dashboard',
-            'User Search' => 'user.search',
-            'User Profile' => 'user.profile'
+            'Users' => route('user.dashboard'),
+            'User Search' => route('user.search'),
+            'User Profile' => '',
         ];
         if($request->has('id')){
             $user = User::leftjoin('user_personal_infos', 'users.id', '=', 'user_personal_infos.userId')
@@ -289,8 +289,8 @@ class UserController extends Controller
     public function reports()
     {
         $option = [
-            'User Dashboard' => 'user.dashboard',
-            'User Reports' => 'user.reports'
+            'Users' => route('user.dashboard'),
+            'User Reports' => '',
         ];
         return view('user/reports',compact('option'));
     }
