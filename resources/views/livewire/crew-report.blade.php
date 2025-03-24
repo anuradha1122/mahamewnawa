@@ -117,12 +117,36 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nameWithInitials }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nic }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->category }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/passport/{{ $result->passportImage }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/passport/{{ $result->passportBookImage }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/visa/{{ $result->visaDocument }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/policereport/{{ $result->policeReportDocument }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/birthCertificate/{{ $result->birthCertificate }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="/attachments/medicalDocument/{{ $result->medicalDocument }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                @if($result->passportImage != null)
+                                <a href="/attachments/passport/{{ $result->passportImage }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                @if($result->passportBookImage != null)
+                                <a href="/attachments/passport/{{ $result->passportBookImage }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                @if($result->visaDocument != null)
+                                <a href="/attachments/visa/{{ $result->visaDocument }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                @if($result->policeReportDocument != null)
+                                <a href="/attachments/policereport/{{ $result->policeReportDocument }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                @if($result->birthCertificate != null)
+                                <a href="/attachments/birthCertificate/{{ $result->birthCertificate }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                @if($result->medicalDocument != null)
+                                <a href="/attachments/medicalDocument/{{ $result->medicalDocument }}" target="_blank" class="bg-blue-500 text-white p-2 rounded-md">Download</a>
+                                @endif
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->diabetes }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->highBloodPressure }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->asthma }}</td>
