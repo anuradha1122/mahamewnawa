@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('dambadiwa_crew_payments', function (Blueprint $table) {
             $table->id();
+            $table->integer('project_id')->unsigned()->required();
             $table->integer('crewId')->unsigned()->required();
+            $table->integer('categoryId')->unsigned()->required();
+            $table->string('nic', 20)->unsigned()->required();
+            $table->tinyInteger('payment_method')->default(0)->required();
             $table->integer('amount')->unsigned()->required();
             $table->string('reciptImage', 300)->required();
             $table->string('reciptNo', 300)->required();

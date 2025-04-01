@@ -58,6 +58,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/dambadiwa/project-crew', [DambadiwaProjectController::class, 'project_crew'])->name('dambadiwa.project_crew');
 
     Route::get('/dambadiwa/profile', [DambadiwaProjectController::class, 'profile'])->name('dambadiwa.profile');
+    Route::get('/dambadiwa/project-payment', [DambadiwaProjectController::class, 'project_payment'])->name('dambadiwa.project_payment');
+    Route::post('/dambadiwa/project-payment', [DambadiwaProjectController::class, 'project_payment_create'])->name('dambadiwa.project_payment');
+    Route::get('/dambadiwa/project-payment-slip', [PdfController::class, 'payment_slip_pdf'])->name('dambadiwa.payment_slip_pdf');
+    Route::get('/dambadiwa/peyment-confirm', [DambadiwaProjectController::class, 'payment_confirm'])->name('dambadiwa.payment_confirm');
+    Route::get('/dambadiwa/peyment-decline', [DambadiwaProjectController::class, 'payment_decline'])->name('dambadiwa.payment_decline');
 
     Route::get('/dambadiwa/project/crewregister', [DambadiwaProjectController::class, 'crewcreate'])->name('dambadiwa.crewregister');
     Route::get('/dambadiwa/project/crewlist', [DambadiwaProjectController::class, 'crewlist'])->name('dambadiwa.crewlist');
@@ -67,7 +72,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/dambadiwa/project/crewlistreportpdf/', [PdfController::class, 'crewlistreportpdf'])->name('dambadiwa.crewlistreportpdf');
     Route::get('/dambadiwa/project/crewreportpdf/', [PdfController::class, 'crewreportpdf'])->name('dambadiwa.crewreportpdf');
     Route::get('/dambadiwa/project/crewlistreportexcel/', [ExcelController::class, 'crewlistreportexcel'])->name('dambadiwa.crewlistreportexcel');
+
+    Route::get('/dambadiwa/project-payment-report', [DambadiwaProjectController::class, 'project_payment_report'])->name('dambadiwa.project_payment_report');
+    Route::get('/dambadiwa/project-user-payment-report', [DambadiwaProjectController::class, 'project_user_payment_report'])->name('dambadiwa.project_user_payment_report');
+    Route::get('/dambadiwa/project-payment-pdf', [PdfController::class, 'project_payment_pdf'])->name('dambadiwa.project_payment_pdf');
+    Route::get('/dambadiwa/project-user_payment-pdf', [PdfController::class, 'project_user_payment_pdf'])->name('dambadiwa.project_user_payment_pdf');
+    Route::get('/dambadiwa/project-payment-excel', [ExcelController::class, 'project_payment_excel'])->name('dambadiwa.project_payment_excel');
+    Route::get('/dambadiwa/project-user-payment-excel', [ExcelController::class, 'project_user_payment_excel'])->name('dambadiwa.project_user_payment_excel');
 });
+
+Route::get('/payment', [DambadiwaProjectController::class, 'payment'])->name('payment');
+Route::post('/payment', [DambadiwaProjectController::class, 'payment_create'])->name('payment_create');
+Route::get('/dambadiwa/peyment-success', [DambadiwaProjectController::class, 'payment_success'])->name('payment_success');
 
 
 require __DIR__.'/auth.php';

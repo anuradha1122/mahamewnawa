@@ -214,4 +214,89 @@ class ExcelController extends Controller
 
         return view('/excel/crew-list-report-excel',compact('results'));
     }
+
+    public function project_payment_excel(Request $request){
+        $project = $request->query('project');
+        $start_date = $request->query('start_date');
+        $end_date = $request->query('end_date');
+    
+        $payment_report = DB::table('dambadiwa_crew_payments')
+        ->leftJoin('users', function ($join) {
+            $join->on('dambadiwa_crew_payments.crewId', '=', 'users.id')
+                ->where('dambadiwa_crew_payments.categoryId', 1);
+        })
+        ->leftJoin('followers', function ($join) {
+            $join->on('dambadiwa_crew_payments.crewId', '=', 'followers.id')
+                ->where('dambadiwa_crew_payments.categoryId', 2);
+        })
+        ->select(
+            DB::raw("
+                CASE 
+                    WHEN dambadiwa_crew_payments.categoryId = 1 THEN users.nameWithInitials 
+                    WHEN dambadiwa_crew_payments.categoryId = 2 THEN followers.nameWithInitials 
+                    ELSE NULL 
+                END AS nameWithInitials
+            "),
+            'dambadiwa_crew_payments.amount',
+            'dambadiwa_crew_payments.addedDate',
+        )
+        ->when($project, function($query) use ($project) {
+            return $query->where('dambadiwa_crew_payments.project_id', $project);
+        })
+        ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
+            return $query->whereBetween('dambadiwa_crew_payments.addedDate', [$start_date, $end_date]);
+        })
+        ->where('dambadiwa_crew_payments.active', 1)
+        ->where('dambadiwa_crew_payments.confirm_decline', '>', 0)
+        ->get();
+
+        return view('/excel/project_payment_excel',compact('payment_report'));
+    }
+
+    public function project_user_payment_excel(Request $request){
+        $project = $request->query('project');
+        $search_user = $request->query('search_user');
+    
+        $payment_report = DB::table('dambadiwa_crew_payments')
+        ->leftJoin('users', function ($join) {
+            $join->on('dambadiwa_crew_payments.crewId', '=', 'users.id')
+                ->where('dambadiwa_crew_payments.categoryId', 1);
+        })
+        ->leftJoin('followers', function ($join) {
+            $join->on('dambadiwa_crew_payments.crewId', '=', 'followers.id')
+                ->where('dambadiwa_crew_payments.categoryId', 2);
+        })
+        ->select(
+            DB::raw("
+                CASE 
+                    WHEN dambadiwa_crew_payments.categoryId = 1 THEN users.nameWithInitials 
+                    WHEN dambadiwa_crew_payments.categoryId = 2 THEN followers.nameWithInitials 
+                    ELSE NULL 
+                END AS nameWithInitials
+            "),
+            DB::raw("
+                CASE 
+                    WHEN dambadiwa_crew_payments.categoryId = 1 THEN users.nic 
+                    WHEN dambadiwa_crew_payments.categoryId = 2 THEN followers.nic 
+                    ELSE NULL 
+                END AS nic
+            "),
+            DB::raw("SUM(dambadiwa_crew_payments.amount) AS total_amount")
+        )
+        ->when($project, function($query) use ($project) {
+            return $query->where('dambadiwa_crew_payments.project_id', $project);
+        })
+        ->when($search_user, function($query) use ($search_user) {
+            return $query->orWhere('users.nameWithInitials', 'LIKE', '%'.$search_user.'%')
+            ->orWhere('users.nic', 'LIKE', '%'.$search_user.'%')
+            ->orWhere('followers.nic', 'LIKE', '%'.$search_user.'%')
+            ->orWhere('followers.nameWithInitials', 'LIKE', '%'.$search_user.'%');
+        })
+        ->where('dambadiwa_crew_payments.active', 1)
+        ->where('dambadiwa_crew_payments.confirm_decline', '>', 0)
+        ->groupBy('nameWithInitials', 'nic')
+        ->get();
+
+        return view('/excel/project_user_payment_excel',compact('payment_report'));
+    }
 }

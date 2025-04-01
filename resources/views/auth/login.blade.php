@@ -2,7 +2,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login') }}" class="sm:rounded-lg border p-5 mb-5">
         @csrf
 
         <!-- Email Address -->
@@ -44,4 +44,9 @@
             </x-primary-button>
         </div>
     </form>
+
+    <div>
+        <span>Make Payment Here </span>
+        <a href="{{ route('payment') }}" class="text-blue-500 underline">Payment</a>
+    </div>
 </x-guest-layout>

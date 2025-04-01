@@ -19,9 +19,9 @@
             <div class="bg-muted relative hidden h-screen items-center justify-center p-10 text-white lg:flex">
                 <img src="/images/mahamevnawa-amawatura.jpg" alt="Mahamewnawa" class="absolute h-full w-full">
             </div>
-            <div class="w-full mx-auto sm:max-w-xl mt-6 px-6 py-4 bg-white overflow-hidden sm:rounded-lg border">
+            <div class="w-full mx-auto sm:max-w-2xl mt-6 px-6 py-4 bg-white overflow-hidden">
                 <div class="flex flex-col items-start gap-2 text-left sm:items-center sm:text-center">
-                    <h1 class="text-2xl font-medium py-10">
+                    <h1 class="text-2xl font-medium py-5">
                         <span class="text-red-800">Welcome</span> to Mahamewnawa Monastery
                     </h1>
                 </div>

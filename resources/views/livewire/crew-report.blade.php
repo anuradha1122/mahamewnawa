@@ -111,6 +111,7 @@
                             <td class="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-800">
                                 <a href="{{ route('dambadiwa.crewreportpdf', ['project_id'=>$projectId,'crew_id' => $result->crewId, 'category_id' => $result->categoryId]) }}" class="text-xs leading-5 bg-red-500 hover:bg-red-700 p-2 rounded-md text-white text-center" target="_blank">Pdf</a>
                                 <a href="{{ route('dambadiwa.crewprofile', ['project_id' => $projectId, 'crew_id' => $result->crewId, 'category_id' => $result->categoryId]) }}" class="text-xs leading-5 bg-yellow-500 hover:bg-yellow-700 p-2 rounded-md text-white text-center" >Edit</a>
+                                <a href="{{ route('dambadiwa.project_payment', ['project_id' => $projectId, 'crew_id' => $result->crewId, 'category_id' => $result->categoryId,'nic'=>$result->nic]) }}" class="text-xs leading-5 bg-blue-500 hover:bg-blue-700 p-2 rounded-md text-white text-center" >Payment</a>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center {{ $bg_color }}">{{ $results->firstItem() + $index }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->userName }}</td>

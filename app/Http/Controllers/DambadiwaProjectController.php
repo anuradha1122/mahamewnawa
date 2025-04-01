@@ -19,6 +19,8 @@ use App\Models\UserPersonalInfo;
 use App\Models\District;
 use App\Models\Follower;
 use App\Models\DambadiwaCrew;
+use App\Models\DambadiwaCrewPayment;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DambadiwaProjectController extends Controller
@@ -853,6 +855,239 @@ class DambadiwaProjectController extends Controller
 
             return redirect()->back()->with('success','Update Successfull');
         }
+    }
+
+    public function project_payment(Request $request)
+    {
+        $projectId = $request->query('project_id');
+        $crew_id = $request->query('crew_id');
+        $categoryId = $request->query('category_id');
+        $nic = $request->query('nic');
+
+        $project = DB::table('dambadiwa_projects')->where('active','=',1)->where('id','=',$projectId)->first();
+        $project_payments = DB::table('dambadiwa_crew_payments')
+        ->where('active','=',1)
+        ->where('project_id','=',$projectId)
+        ->where('crewId','=',$crew_id)
+        ->where('categoryId','=',$categoryId)
+        ->get();
+
+        $paymentMethod = collect([
+            (object) [
+                'id' => 1,
+                'name' => 'Bank',
+            ],
+            (object) [
+                'id' => 2,
+                'name' => 'Cash',
+            ],
+        ]);
+
+        $option = [
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Project' => route('dambadiwa.project', ['id' => $projectId]),
+            'Crew List' => route('dambadiwa.crewlist', ['id' => $projectId,'crew_type' => $categoryId]),
+            'Project Payment' => '',
+        ];
+
+        return view('dambadiwa.project-payment',compact('option','projectId','crew_id','categoryId','project','project_payments','paymentMethod','nic'));
+    }
+
+    public function project_payment_create(Request $request)
+    {
+        $projectId = $request->query('projectId');
+        $crewId = $request->query('crewId');
+        $categoryId = $request->query('categoryId');
+        $nic = $request->query('nic');
+
+        $current_date = date('Y-m-d');
+        $userId = Auth::user()->id;
+
+        if($request->payment_method == 1){
+            $validated = $request->validate([
+                'payment_method' => 'required|numeric|min:1',
+                'amount' => 'required|numeric|min:1',
+                'reciptImage' => 'required',
+                'reciptNo' => 'required',
+                'addedDate' => 'required|date',
+            ]);
+        }else{
+            $validated = $request->validate([
+                'payment_method' => 'required|numeric|min:1',
+                'amount' => 'required|numeric|min:1',
+                'addedDate' => 'required|date',
+            ]);
+        }
+
+        if ($request->hasFile('reciptImage')) {
+            $reciptImage = 'Payment-Slip-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('reciptImage')->getClientOriginalExtension();
+            $reciptImageMove = $request->file('reciptImage')->move(public_path('attachments/payments/'), $reciptImage);
+            $slip_no = $request->reciptNo;
+        }
+        else{
+            $reciptImage = '';
+            $slip_no = '';
+        }
+
+        $project_payment = DambadiwaCrewPayment::create([
+            'project_id' => $projectId,
+            'crewId' => $crewId,
+            'categoryId' => $categoryId,
+            'nic' => $nic,
+            'payment_method' => $request->payment_method,
+            'amount' => $request->amount,
+            'reciptImage' => $reciptImage,
+            'reciptNo' => $slip_no,
+            'addedDate' => $request->addedDate,
+            'confirmedId' => $userId,
+            'confirmedDate' => $current_date,
+        ]);
+
+        return redirect()->back()->with('success','payment Successfull');
+    }
+
+    public function payment(Request $request)
+    {
+        $projects = DB::table('dambadiwa_projects')->where('active','=',1)->get();
+        $paymentMethod = collect([
+            (object) [
+                'id' => 1,
+                'name' => 'Bank',
+            ],
+        ]);
+
+        $option = [
+            'Home' => url('/'),
+            'Payment' => '',
+        ];
+
+        return view('payment',compact('option','projects','paymentMethod'));
+    }
+
+    public function payment_create(Request $request)
+    {
+        $current_date = date('Y-m-d');
+        $nic = $request->nic;
+
+        if($request->payment_method == 1){
+            $validated = $request->validate([
+                'project' => 'required|numeric|min:1',
+                'payment_method' => 'required|numeric|min:1',
+                'amount' => 'required|numeric|min:1',
+                'reciptImage' => 'required',
+                'reciptNo' => 'required',
+                'addedDate' => 'required|date',
+            ]);
+        }else{
+            $validated = $request->validate([
+                'project' => 'required|numeric|min:1',
+                'payment_method' => 'required|numeric|min:1',
+                'amount' => 'required|numeric|min:1',
+                'addedDate' => 'required|date',
+            ]);
+        }
+
+        $follower_check = DB::table('followers')->where('nic',$nic)->where('active','1')->first();
+
+        if(!empty($follower_check)){
+            if ($request->hasFile('reciptImage')) {
+                $reciptImage = 'Payment-Slip-'.now()->format('Ymd-His').rand(0000,9999).'.'.$request->file('reciptImage')->getClientOriginalExtension();
+                $reciptImageMove = $request->file('reciptImage')->move(public_path('attachments/payments/'), $reciptImage);
+                $slip_no = $request->reciptNo;
+            }
+            else{
+                $reciptImage = '';
+                $slip_no = '';
+            }
+    
+            $project_payment = DambadiwaCrewPayment::create([
+                'project_id' => $request->project,
+                'crewId' => $follower_check->id,
+                'categoryId' => 2,
+                'nic' => $nic,
+                'payment_method' => $request->payment_method,
+                'amount' => $request->amount,
+                'reciptImage' => $reciptImage,
+                'reciptNo' => $slip_no,
+                'addedDate' => $request->addedDate,
+                'confirmedId' => 0,
+            ]);
+    
+            return redirect()->route('payment_success', compact('project_payment'));
+        }else{
+            return redirect()->back()->with('error','User Not Found!');
+        }
+        
+    }
+
+    public function payment_confirm(Request $request){
+        $payment_id = $request->query('payment_id');
+        $current_date = date('Y-m-d');
+        $userId = Auth::user()->id;
+
+        $dambadiwa_crew = DambadiwaCrewPayment::where('id',$payment_id)->where('active', 1)->update([
+            'confirmedId' => $userId,
+            'confirmedDate' => $current_date,
+            'confirm_decline' => 1,
+        ]);
+
+        return redirect()->back()->with('success','Payment Confirm Successfull');
+    }
+
+    public function payment_decline(Request $request){
+        $payment_id = $request->query('payment_id');
+        $current_date = date('Y-m-d');
+        $userId = Auth::user()->id;
+
+        $dambadiwa_crew = DambadiwaCrewPayment::where('id',$payment_id)->where('active', 1)->update([
+            'confirmedId' => $userId,
+            'confirmedDate' => $current_date,
+            'confirm_decline' => 2,
+        ]);
+
+        return redirect()->back()->with('success','Payment Decline Successfull');
+    }
+
+    public function payment_success(Request $request){
+        $project_payment_id = $request->query('project_payment');
+
+        $project_payments = DB::table('dambadiwa_crew_payments')
+        ->join('followers','dambadiwa_crew_payments.crewId','followers.id')
+        ->where('dambadiwa_crew_payments.active','=',1)
+        ->where('followers.active','=',1)
+        ->where('dambadiwa_crew_payments.id','=',$project_payment_id)
+        ->first();
+
+        return view('payment_success', compact('project_payments'));
+    }
+
+    public function reports(Request $request){
+        $option = [
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Project Reports' => '',
+        ];
+
+        return view('dambadiwa.project_reports', compact('option'));
+    }
+
+    public function project_payment_report(Request $request){
+        $option = [
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Project Reports' => route('dambadiwa.reports'),
+            'Project Payment Reports' => '',
+        ];
+
+        return view('dambadiwa.project_payment_report', compact('option'));
+    }
+
+    public function project_user_payment_report(Request $request){
+        $option = [
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Project Reports' => route('dambadiwa.reports'),
+            'Project User Payment Reports' => '',
+        ];
+
+        return view('dambadiwa.project_user_payment_report', compact('option'));
     }
 
     /**

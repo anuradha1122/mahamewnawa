@@ -454,4 +454,133 @@ class PdfController extends Controller
         $pdf = Pdf::loadView('pdf.crew-pdf', compact('projectId','crew_id','category_id','crew'))->setPaper('A4', 'portrait');
         return $pdf->stream('Crew Report.pdf');
     }
+
+    public function payment_slip_pdf(Request $request){
+        $projectId = $request->query('projectId');
+        $crewId = $request->query('crewId');
+        $payment_id = $request->query('payment_id');
+        $categoryId = $request->query('categoryId');
+
+        if($categoryId == 1){
+            $project_payments = DB::table('dambadiwa_crew_payments')
+            ->join('users','dambadiwa_crew_payments.crewId','users.id')
+            ->join('user_contact_infos','users.id','user_contact_infos.userId')
+            ->join('dambadiwa_projects','dambadiwa_crew_payments.project_id','dambadiwa_projects.id')
+            ->join('dambadiwa_crews','dambadiwa_crew_payments.project_id','dambadiwa_crews.projectId')
+            ->where('dambadiwa_crew_payments.active','=',1)
+            ->where('users.active','=',1)
+            ->where('dambadiwa_crew_payments.id','=',$payment_id)
+            ->where('dambadiwa_crews.projectId','=',$projectId)
+            ->where('dambadiwa_crews.crewId','=',$crewId)
+            ->where('dambadiwa_crews.categoryId','=',$categoryId)
+            ->select('dambadiwa_crew_payments.*','users.*','user_contact_infos.*','dambadiwa_projects.startDate','dambadiwa_crews.id AS regId')
+            ->first();
+        }
+        else if($categoryId == 2){
+            $project_payments = DB::table('dambadiwa_crew_payments')
+            ->join('followers','dambadiwa_crew_payments.crewId','followers.id')
+            ->join('contact_infos','followers.id','contact_infos.followerId')
+            ->join('dambadiwa_projects','dambadiwa_crew_payments.project_id','dambadiwa_projects.id')
+            ->join('dambadiwa_crews','dambadiwa_crew_payments.project_id','dambadiwa_crews.projectId')
+            ->where('dambadiwa_crew_payments.active','=',1)
+            ->where('followers.active','=',1)
+            ->where('dambadiwa_crew_payments.id','=',$payment_id)
+            ->where('dambadiwa_crews.projectId','=',$projectId)
+            ->where('dambadiwa_crews.crewId','=',$crewId)
+            ->where('dambadiwa_crews.categoryId','=',$categoryId)
+            ->select('dambadiwa_crew_payments.*','followers.*','contact_infos.*','dambadiwa_projects.startDate','dambadiwa_crews.id AS regId')
+            ->first();
+        }
+        
+        $pdf = Pdf::loadView('pdf.payment-slip', compact('payment_id','project_payments'))->setPaper('A5', 'landscape');
+        return $pdf->stream('Project Payment Receipt.pdf');
+    }
+
+    public function project_payment_pdf(Request $request){
+        $project = $request->query('project');
+        $start_date = $request->query('start_date');
+        $end_date = $request->query('end_date');
+    
+        $payment_report = DB::table('dambadiwa_crew_payments')
+            ->leftJoin('users', function ($join) {
+                $join->on('dambadiwa_crew_payments.crewId', '=', 'users.id')
+                    ->where('dambadiwa_crew_payments.categoryId', 1);
+            })
+            ->leftJoin('followers', function ($join) {
+                $join->on('dambadiwa_crew_payments.crewId', '=', 'followers.id')
+                    ->where('dambadiwa_crew_payments.categoryId', 2);
+            })
+            ->select(
+                DB::raw("
+                    CASE 
+                        WHEN dambadiwa_crew_payments.categoryId = 1 THEN users.nameWithInitials 
+                        WHEN dambadiwa_crew_payments.categoryId = 2 THEN followers.nameWithInitials 
+                        ELSE NULL 
+                    END AS nameWithInitials
+                "),
+                'dambadiwa_crew_payments.amount',
+                'dambadiwa_crew_payments.addedDate',
+            )
+            ->when($project, function($query) use ($project) {
+                return $query->where('dambadiwa_crew_payments.project_id', $project);
+            })
+            ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
+                return $query->whereBetween('dambadiwa_crew_payments.addedDate', [$start_date, $end_date]);
+            })
+            ->where('dambadiwa_crew_payments.active', 1)
+            ->where('dambadiwa_crew_payments.confirm_decline', '>', 0)
+            ->get();
+    
+        $pdf = Pdf::loadView('pdf.project-payment-pdf', compact('payment_report'))->setPaper('A4', 'portrait');
+        return $pdf->stream('Project Payment Report.pdf');
+    }
+
+    public function project_user_payment_pdf(Request $request){
+        $project = $request->query('project');
+        $search_user = $request->query('search_user');
+    
+        $payment_report = DB::table('dambadiwa_crew_payments')
+        ->leftJoin('users', function ($join) {
+            $join->on('dambadiwa_crew_payments.crewId', '=', 'users.id')
+                ->where('dambadiwa_crew_payments.categoryId', 1);
+        })
+        ->leftJoin('followers', function ($join) {
+            $join->on('dambadiwa_crew_payments.crewId', '=', 'followers.id')
+                ->where('dambadiwa_crew_payments.categoryId', 2);
+        })
+        ->select(
+            DB::raw("
+                CASE 
+                    WHEN dambadiwa_crew_payments.categoryId = 1 THEN users.nameWithInitials 
+                    WHEN dambadiwa_crew_payments.categoryId = 2 THEN followers.nameWithInitials 
+                    ELSE NULL 
+                END AS nameWithInitials
+            "),
+            DB::raw("
+                CASE 
+                    WHEN dambadiwa_crew_payments.categoryId = 1 THEN users.nic 
+                    WHEN dambadiwa_crew_payments.categoryId = 2 THEN followers.nic 
+                    ELSE NULL 
+                END AS nic
+            "),
+            DB::raw("SUM(dambadiwa_crew_payments.amount) AS total_amount")
+        )
+        ->when($project, function($query) use ($project) {
+            return $query->where('dambadiwa_crew_payments.project_id', $project);
+        })
+        ->when($search_user, function($query) use ($search_user) {
+            return $query->orWhere('users.nameWithInitials', 'LIKE', '%'.$search_user.'%')
+            ->orWhere('users.nic', 'LIKE', '%'.$search_user.'%')
+            ->orWhere('followers.nic', 'LIKE', '%'.$search_user.'%')
+            ->orWhere('followers.nameWithInitials', 'LIKE', '%'.$search_user.'%');
+        })
+        ->where('dambadiwa_crew_payments.active', 1)
+        ->where('dambadiwa_crew_payments.confirm_decline', '>', 0)
+        ->groupBy('nameWithInitials', 'nic')
+        ->get();
+    
+        $pdf = Pdf::loadView('pdf.project-user-payment-pdf', compact('payment_report'))->setPaper('A4', 'portrait');
+        return $pdf->stream('Project User Payment Report.pdf');
+    }
+    
 }
