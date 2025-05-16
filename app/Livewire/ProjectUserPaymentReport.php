@@ -27,6 +27,8 @@ class ProjectUserPaymentReport extends Component
                 ->where('dambadiwa_crew_payments.categoryId', 2);
         })
         ->select(
+            'dambadiwa_crew_payments.crewId',
+            'dambadiwa_crew_payments.categoryId',
             DB::raw("CASE 
                         WHEN dambadiwa_crew_payments.categoryId = 1 THEN users.nameWithInitials 
                         WHEN dambadiwa_crew_payments.categoryId = 2 THEN followers.nameWithInitials 
@@ -52,7 +54,7 @@ class ProjectUserPaymentReport extends Component
         })
         ->where('dambadiwa_crew_payments.active', 1)
         ->where('dambadiwa_crew_payments.confirm_decline', '>', 0)
-        ->groupBy('nameWithInitials', 'nic')
+        ->groupBy('dambadiwa_crew_payments.crewId', 'dambadiwa_crew_payments.categoryId', 'nameWithInitials', 'nic')
         ->paginate(50);
         
         return view('livewire.project-user-payment-report', compact('projects','payment_report'));

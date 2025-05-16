@@ -49,7 +49,7 @@
         <tbody>
           <tr>
             <td style="padding: 5px; width: 110px;">Name</td>
-            <td style="padding: 5px; width: 344.5px;">: {{ $project_payments->name }}</td>
+            <td style="padding: 5px; width: 344.5px;">: {{ $project_payments->nameWithInitials }}</td>
             <td style="padding: 5px;">Date</td>
             <td style="padding: 5px;">: {{ $project_payments->addedDate }}</td>
           </tr>
@@ -71,7 +71,7 @@
           </tr>
           <tr>
             <td>Registration No</td>
-            <td>: {{ $project_payments->project_id }} - {{ $project_payments->regId }}</td>
+            <td>: {{ $project_payments->project_id }} - {{ $project_payments->crewId }}</td>
           </tr>
           
         </tbody>

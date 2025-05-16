@@ -1090,6 +1090,21 @@ class DambadiwaProjectController extends Controller
         return view('dambadiwa.project_user_payment_report', compact('option'));
     }
 
+    public function user_payment_details(Request $request){
+        $projectId = $request->query('projectId');
+        $crewId = $request->query('crewId');
+        $categoryId = $request->query('categoryId');
+
+        $option = [
+            'Dambadiwa' => route('dambadiwa.dashboard'),
+            'Project Reports' => route('dambadiwa.reports'),
+            'Project User Payment Reports' => route('dambadiwa.project_user_payment_report'),
+            'Project User Payment Details' => '',
+        ];
+
+        return view('dambadiwa.project_user_payment_details', compact('option','projectId','crewId','categoryId'));
+    }
+
     /**
      * Display the specified resource.
      */

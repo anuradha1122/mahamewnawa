@@ -33,7 +33,7 @@
                             @foreach ($payment_report as $index => $payment)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $payment_report->firstItem() + $index }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $payment->nameWithInitials }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="{{ route('dambadiwa.user_payment_details', ['projectId'=>$project,'crewId'=>$payment->crewId,'categoryId'=>$payment->categoryId]) }}" class="text-blue-500">{{ $payment->nameWithInitials }}</a></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $payment->nic }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $payment->total_amount }}</td>
                             </tr>

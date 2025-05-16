@@ -79,6 +79,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dambadiwa/project-user_payment-pdf', [PdfController::class, 'project_user_payment_pdf'])->name('dambadiwa.project_user_payment_pdf');
     Route::get('/dambadiwa/project-payment-excel', [ExcelController::class, 'project_payment_excel'])->name('dambadiwa.project_payment_excel');
     Route::get('/dambadiwa/project-user-payment-excel', [ExcelController::class, 'project_user_payment_excel'])->name('dambadiwa.project_user_payment_excel');
+    Route::get('/dambadiwa/project-user-payment-details', [DambadiwaProjectController::class, 'user_payment_details'])->name('dambadiwa.user_payment_details');
 });
 
 Route::get('/payment', [DambadiwaProjectController::class, 'payment'])->name('payment');
